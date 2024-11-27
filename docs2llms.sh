@@ -33,3 +33,18 @@ get_content() {
         curl -s "$api_url"
     fi
 }
+
+get_raw_content() {
+    local owner="$1"
+    local repo="$2"
+    local branch="$3"
+    local file_path="$4"
+    local token="$5"
+
+    local raw_url="https://raw.githubusercontent.com/$owner/$repo/$branch/$file_path"
+    if [[ -n "$token" ]]; then
+        curl -s -H "Authorization: token $token" "$raw_url"
+    else
+        curl -s "$raw_url"
+    fi
+}
