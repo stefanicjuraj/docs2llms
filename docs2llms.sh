@@ -84,3 +84,48 @@ process_local_directory() {
         echo "Processing: $file"
     done
 }
+
+main() {
+    if [[ $# -lt 1 ]]; then
+        echo "Usage (local):  $0 local <local_docs_folder> [output_file]"
+        echo "Usage (remote): $0 <github_docs_folder_URL> [output_file]"
+        exit 1
+    fi
+
+    input="$1"
+    local_docs_dir="${2:-./docs}"
+    output_file="${3:-llms-full.txt}"
+
+    if [[ "$input" == "local" ]]; then
+        if [[ -d "$local_docs_dir" ]]; then
+            >"$output_file"
+            process_local_directory "$local_docs_dir" "$output_file"
+            echo "\n✅ $output_file"
+        else
+            echo "\n❌ Local docs directory '$local_docs_dir' not found."
+            exit 1
+        fi
+    elif validate_github_url "$input"; then
+        github_url="$input"
+        parse_github_url "$github_url"
+
+        echo "\nRepository: $owner/$repo"
+        echo "Branch: $branch"
+        echo "Path: $path"
+
+        token="${GITHUB_TOKEN:-}"
+        if [[ -z "$token" ]]; then
+            echo "\n⚠️ GitHub token not found. Rate limit is restricted to 60 requests per hour.\n"
+        fi
+
+        >"$output_file"
+        process_directory "$owner" "$repo" "$branch" "$path" "$token"
+
+        echo "\n✅ $output_file"
+    else
+        echo "Invalid input. Please provide a valid GitHub URL or 'local'."
+        exit 1
+    fi
+}
+
+main "$@"
