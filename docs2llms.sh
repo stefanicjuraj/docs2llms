@@ -73,3 +73,14 @@ process_directory() {
         fi
     done <<<"$items"
 }
+
+process_local_directory() {
+    local dir_path="$1"
+    local output_file="$2"
+
+    find "$dir_path" -type f \( -name "*.md" -o -name "*.mdx" \) | while read -r file; do
+        cat "$file" >>"$output_file"
+        echo "\n\n" >>"$output_file"
+        echo "Processing: $file"
+    done
+}
