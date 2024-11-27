@@ -48,3 +48,28 @@ get_raw_content() {
         curl -s "$raw_url"
     fi
 }
+
+process_directory() {
+    local owner="$1"
+    local repo="$2"
+    local branch="$3"
+    local path="$4"
+    local token="$5"
+
+    local response=$(get_content "$owner" "$repo" "$branch" "$path" "$token")
+    local items=$(echo "$response" | jq -c '.[]')
+
+    while IFS= read -r item; do
+        local type=$(echo "$item" | jq -r '.type')
+        local name=$(echo "$item" | jq -r '.name')
+        local file_path=$(echo "$item" | jq -r '.path')
+
+        if [[ "$type" == "file" ]] && [[ "$name" =~ \.md$|\.mdx$ ]]; then
+            get_raw_content "$owner" "$repo" "$branch" "$file_path" "$token" >>"$output_file"
+            echo -e "\n\n" >>"$output_file"
+            echo "Processing: $file_path"
+        elif [[ "$type" == "dir" ]]; then
+            process_directory "$owner" "$repo" "$branch" "$file_path" "$token"
+        fi
+    done <<<"$items"
+}
