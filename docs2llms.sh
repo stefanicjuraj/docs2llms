@@ -64,7 +64,7 @@ process_directory() {
         local name=$(echo "$item" | jq -r '.name')
         local file_path=$(echo "$item" | jq -r '.path')
 
-        if [[ "$type" == "file" ]] && [[ "$name" =~ \.md$|\.mdx$|\.txt$ ]]; then
+        if [[ "$type" == "file" ]] && [[ "$name" =~ \.md$|\.mdx$|\.txt$|\.rst$ ]]; then
             get_raw_content "$owner" "$repo" "$branch" "$file_path" "$token" >>"$output_file"
             echo -e "\n\n" >>"$output_file"
             echo "Processing: $file_path"
@@ -78,7 +78,7 @@ process_local_directory() {
     local dir_path="$1"
     local output_file="$2"
 
-    find "$dir_path" -type f \( -name "*.md" -o -name "*.mdx" -o -name "*.txt" \) | while read -r file; do
+    find "$dir_path" -type f \( -name "*.md" -o -name "*.mdx" -o -name "*.txt" -o -name "*.rst" \) | while read -r file; do
         cat "$file" >>"$output_file"
         echo "\n\n" >>"$output_file"
         echo "Processing: $file"
