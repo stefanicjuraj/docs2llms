@@ -18,3 +18,18 @@ parse_github_url() {
     branch="${branch:-main}"
     path="${path:-}"
 }
+
+get_content() {
+    local owner="$1"
+    local repo="$2"
+    local branch="$3"
+    local path="$4"
+    local token="$5"
+
+    local api_url="https://api.github.com/repos/$owner/$repo/contents/$path?ref=$branch"
+    if [[ -n "$token" ]]; then
+        curl -s -H "Authorization: token $token" "$api_url"
+    else
+        curl -s "$api_url"
+    fi
+}
