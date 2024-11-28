@@ -55,6 +55,7 @@ process_directory() {
     local branch="$3"
     local path="$4"
     local token="$5"
+    local output_file="$6"
 
     local response=$(get_content "$owner" "$repo" "$branch" "$path" "$token")
     local items=$(echo "$response" | jq -c '.[]')
@@ -69,7 +70,7 @@ process_directory() {
             echo -e "\n\n" >>"$output_file"
             echo "Processing: $file_path"
         elif [[ "$type" == "dir" ]]; then
-            process_directory "$owner" "$repo" "$branch" "$file_path" "$token"
+            process_directory "$owner" "$repo" "$branch" "$file_path" "$token" "$output_file"
         fi
     done <<<"$items"
 }
@@ -119,7 +120,7 @@ main() {
         fi
 
         >"$output_file"
-        process_directory "$owner" "$repo" "$branch" "$path" "$token"
+        process_directory "$owner" "$repo" "$branch" "$path" "$token" "$output_file"
 
         echo "\n✅ $output_file"
     else
