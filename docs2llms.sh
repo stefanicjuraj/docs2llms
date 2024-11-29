@@ -49,6 +49,19 @@ get_raw_content() {
     fi
 }
 
+skip_directory() {
+    local dir_name="$1"
+    shift
+    local skip_folders=("$@")
+
+    for skip_folder in "${skip_folders[@]}"; do
+        if [[ "$dir_name" == "$skip_folder" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
 process_directory() {
     local owner="$1"
     local repo="$2"
@@ -56,6 +69,8 @@ process_directory() {
     local path="$4"
     local token="$5"
     local output_file="$6"
+    shift 6
+    local skip_folders=("$@")
 
     local response=$(get_content "$owner" "$repo" "$branch" "$path" "$token")
     local items=$(echo "$response" | jq -c '.[]')
@@ -70,7 +85,11 @@ process_directory() {
             echo -e "\n\n" >>"$output_file"
             echo "Processing: $file_path"
         elif [[ "$type" == "dir" ]]; then
-            process_directory "$owner" "$repo" "$branch" "$file_path" "$token" "$output_file"
+            if ! skip_directory "$name" "${skip_folders[@]}"; then
+                process_directory "$owner" "$repo" "$branch" "$file_path" "$token" "$output_file" "${skip_folders[@]}"
+            else
+                echo "Skipping: $file_path"
+            fi
         fi
     done <<<"$items"
 }
@@ -78,8 +97,15 @@ process_directory() {
 process_local_directory() {
     local dir_path="$1"
     local output_file="$2"
+    shift 2
+    local skip_folders=("$@")
 
-    find "$dir_path" -type f \( -name "*.md" -o -name "*.mdx" -o -name "*.txt" -o -name "*.rst" \) | while read -r file; do
+    local exclude_args=()
+    for folder in "${skip_folders[@]}"; do
+        exclude_args+=(-path "$dir_path/$folder" -prune -o)
+    done
+
+    find "$dir_path" "${exclude_args[@]}" -type f \( -name "*.md" -o -name "*.mdx" -o -name "*.txt" -o -name "*.rst" \) -print | while read -r file; do
         cat "$file" >>"$output_file"
         echo "\n\n" >>"$output_file"
         echo "Processing: $file"
@@ -87,20 +113,55 @@ process_local_directory() {
 }
 
 main() {
-    if [[ $# -lt 1 ]]; then
-        echo "Usage (local):  $0 local <local_docs_folder> [output_file]"
-        echo "Usage (remote): $0 <github_docs_folder_URL> [output_file]"
-        exit 1
+    local skip_folders=()
+    local input
+    local local_docs_dir="./docs"
+    local output_file=""
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+        local)
+            input="local"
+            shift
+            ;;
+        --skip)
+            break
+            ;;
+        *)
+            if [[ -z "$input" ]]; then
+                input="$1"
+            elif [[ -z "$local_docs_dir" ]]; then
+                local_docs_dir="$1"
+            elif [[ -z "$output_file" ]]; then
+                output_file="$1"
+            fi
+            shift
+            ;;
+        esac
+    done
+
+    if [[ "$1" == "--skip" ]]; then
+        shift
+        while [[ $# -gt 0 ]] && [[ "$1" != -* ]]; do
+            skip_folders+=("$1")
+            shift
+        done
     fi
 
-    input="$1"
-    local_docs_dir="${2:-./docs}"
-    output_file="${3:-llms-full.txt}"
+    if [[ -z "$output_file" ]]; then
+        output_file="llms-full.txt"
+    fi
+
+    if [[ -z "$input" ]]; then
+        echo "Usage (local):  $0 local <local_docs_folder> [output_file] [--skip folder1 folder2 ...]"
+        echo "Usage (remote): $0 <github_docs_folder_URL> [output_file] [--skip folder1 folder2 ...]"
+        exit 1
+    fi
 
     if [[ "$input" == "local" ]]; then
         if [[ -d "$local_docs_dir" ]]; then
             >"$output_file"
-            process_local_directory "$local_docs_dir" "$output_file"
+            process_local_directory "$local_docs_dir" "$output_file" "${skip_folders[@]}"
             echo "\n✅ $output_file"
         else
             echo "\n❌ Local docs directory '$local_docs_dir' not found."
@@ -119,10 +180,8 @@ main() {
             echo "\n⚠️ GitHub token not found. Rate limit is restricted to 60 requests per hour.\n"
         fi
 
-        output_file="${2:-$output_file}"
-
         >"$output_file"
-        process_directory "$owner" "$repo" "$branch" "$path" "$token" "$output_file"
+        process_directory "$owner" "$repo" "$branch" "$path" "$token" "$output_file" "${skip_folders[@]}"
 
         echo "\n✅ $output_file"
     else
