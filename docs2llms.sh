@@ -119,6 +119,8 @@ main() {
             echo "\n⚠️ GitHub token not found. Rate limit is restricted to 60 requests per hour.\n"
         fi
 
+        output_file="${2:-$output_file}"
+
         >"$output_file"
         process_directory "$owner" "$repo" "$branch" "$path" "$token" "$output_file"
 
