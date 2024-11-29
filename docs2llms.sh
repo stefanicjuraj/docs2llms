@@ -115,7 +115,7 @@ process_local_directory() {
 main() {
     local skip_folders=()
     local input
-    local local_docs_dir="./docs"
+    local local_docs_dir=""
     local output_file=""
 
     while [[ $# -gt 0 ]]; do
