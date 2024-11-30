@@ -41,14 +41,14 @@ Parameters
 ### Examples
 
 ```
-sh docs2llms.sh local remote
+sh docs2llms.sh local example
 ```
 ```
 deno docs2llms.ts local example
 ```
 ```
-sh docs2llms.sh https://github.com/stefanicjuraj/docs2llms/example/docs
+sh docs2llms.sh https://github.com/stefanicjuraj/docs2llms/tree/main/example/docs
 ```
 ```
-deno docs2llms.ts local https://github.com/stefanicjuraj/docs2llms/example/docs
+deno docs2llms.ts local https://github.com/stefanicjuraj/docs2llms/tree/main/example/docs
 ```
