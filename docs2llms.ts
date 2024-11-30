@@ -205,10 +205,10 @@ async function main() {
 
     if (!input) {
         console.log(
-            "Usage (local):  deno docs2llms.ts local <local_docs_folder> [output_file] [--skip folder1 folder2 ...]"
+            "Usage (local):  deno docs2llms.ts local <local_directory> [output_file] [--skip <folder1> <folder2> ...]"
         );
         console.log(
-            "Usage (remote): deno docs2llms.ts <github_docs_folder_URL> [output_file] [--skip folder1 folder2 ...]"
+            "Usage (remote): deno docs2llms.ts <remote_directory> [output_file] [--skip <folder1> <folder2> ...]"
         );
         Deno.exit(1);
     }

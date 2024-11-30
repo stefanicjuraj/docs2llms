@@ -153,8 +153,8 @@ main() {
     fi
 
     if [[ -z "$input" ]]; then
-        echo "Usage (local):  $0 local <local_docs_folder> [output_file] [--skip folder1 folder2 ...]"
-        echo "Usage (remote): $0 <github_docs_folder_URL> [output_file] [--skip folder1 folder2 ...]"
+        echo "Usage (local):  $0 local <local_directory> [output_file] [--skip folder1 folder2 ...]"
+        echo "Usage (remote): $0 <remote_directory> [output_file] [--skip folder1 folder2 ...]"
         exit 1
     fi
 
@@ -185,7 +185,7 @@ main() {
 
         echo "\n✅ $output_file"
     else
-        echo "Invalid input. Please provide a valid GitHub URL or 'local'."
+        echo "Invalid input. Provide a valid GitHub URL or use 'local'."
         exit 1
     fi
 }
