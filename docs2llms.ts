@@ -84,21 +84,30 @@ async function processDirectory(
     repo: string,
     branch: string,
     path: string,
-    outputFile: string,
+    llmsFullFile: string,
+    llmsFile: string,
     token?: string,
     skipFolders: string[] = []
 ): Promise<void> {
     const fileExtensions = [".md", ".mdx", ".txt", ".rst"];
-    const outputWriter = await Deno.open(outputFile, {
+    const llmsFullWriter = await Deno.open(llmsFullFile, {
+        create: true,
+        truncate: true,
+        write: true,
+    });
+    const llmsWriter = await Deno.open(llmsFile, {
         create: true,
         truncate: true,
         write: true,
     });
 
     try {
+        await llmsWriter.write(new TextEncoder().encode(`# ${repo}\n\n`));
+
         const contents = await getContent(owner, repo, branch, path, token);
 
         for (const item of contents) {
+            const itemUrl = `https://github.com/${owner}/${repo}/blob/${branch}/${item.path}`;
             if (
                 item.type === "file" &&
                 fileExtensions.some((ext) => item.name.endsWith(ext))
@@ -110,20 +119,27 @@ async function processDirectory(
                     item.path,
                     token
                 );
-                await outputWriter.write(
+                await llmsFullWriter.write(
                     new TextEncoder().encode(rawContent + "\n\n")
+                );
+                await llmsWriter.write(
+                    new TextEncoder().encode(`- [${item.name}](${itemUrl})\n`)
                 );
                 console.log(`Processing: ${item.path}`);
             } else if (
                 item.type === "dir" &&
                 !skipDirectory(item.name, skipFolders)
             ) {
+                await llmsWriter.write(
+                    new TextEncoder().encode(`## ${item.name}\n`)
+                );
                 await processDirectory(
                     owner,
                     repo,
                     branch,
                     item.path,
-                    outputFile,
+                    llmsFullFile,
+                    llmsFile,
                     token,
                     skipFolders
                 );
@@ -132,22 +148,31 @@ async function processDirectory(
             }
         }
     } finally {
-        outputWriter.close();
+        llmsFullWriter.close();
+        llmsWriter.close();
     }
 }
 
 async function processLocalDirectory(
     dirPath: string,
-    outputFile: string,
+    llmsFullFile: string,
+    llmsFile: string,
     skipFolders: string[] = []
 ): Promise<void> {
-    const outputWriter = await Deno.open(outputFile, {
+    const llmsFullWriter = await Deno.open(llmsFullFile, {
+        create: true,
+        truncate: true,
+        write: true,
+    });
+    const llmsWriter = await Deno.open(llmsFile, {
         create: true,
         truncate: true,
         write: true,
     });
 
     try {
+        await llmsWriter.write(new TextEncoder().encode(`# ${dirPath}\n\n`));
+
         for await (const entry of Deno.readDir(dirPath)) {
             if (
                 entry.isFile &&
@@ -161,15 +186,21 @@ async function processLocalDirectory(
                     const filePath = `${dirPath}/${entry.name}`;
                     const fileContent = await Deno.readTextFile(filePath);
 
-                    await outputWriter.write(
+                    await llmsFullWriter.write(
                         new TextEncoder().encode(fileContent + "\n\n")
+                    );
+                    await llmsWriter.write(
+                        new TextEncoder().encode(
+                            `- [${entry.name}](${filePath})\n`
+                        )
                     );
                     console.log(`Processing: ${entry.name}`);
                 }
             }
         }
     } finally {
-        outputWriter.close();
+        llmsFullWriter.close();
+        llmsWriter.close();
     }
 }
 
@@ -179,7 +210,8 @@ async function main() {
 
     let input: string | undefined;
     let localDocsDir = "";
-    let outputFile: string | undefined;
+    let llmsFullFile: string | undefined;
+    let llmsFile: string | undefined;
     let skipFolders: string[] = [];
 
     if (skipFolderIndex !== -1) {
@@ -190,17 +222,20 @@ async function main() {
     if (args.length > 0) {
         input = args[0];
         if (args[1] && input !== "local") {
-            outputFile = args[1];
+            llmsFullFile = args[1];
         } else if (args[1]) {
             localDocsDir = args[1];
         }
         if (args[2] && input === "local") {
-            outputFile = args[2];
+            llmsFullFile = args[2];
         }
     }
 
-    if (!outputFile) {
-        outputFile = "llms-full.txt";
+    if (!llmsFullFile) {
+        llmsFullFile = "llms-full.txt";
+    }
+    if (!llmsFile) {
+        llmsFile = "llms.txt";
     }
 
     if (!input) {
@@ -217,8 +252,14 @@ async function main() {
 
     try {
         if (input === "local") {
-            await processLocalDirectory(localDocsDir, outputFile, skipFolders);
-            console.log(`\n✅ ${outputFile}`);
+            await processLocalDirectory(
+                localDocsDir,
+                llmsFullFile,
+                llmsFile,
+                skipFolders
+            );
+            console.log(`\n✅ ${llmsFullFile}`);
+            console.log(`\n✅ ${llmsFile}`);
         } else if (validateGitHubURL(input)) {
             const { owner, repo, branch, path } = parseGitHubURL(input);
 
@@ -237,14 +278,16 @@ async function main() {
                 repo,
                 branch,
                 path,
-                outputFile,
+                llmsFullFile,
+                llmsFile,
                 token,
                 skipFolders
             );
-            console.log(`\n✅ ${outputFile}`);
+            console.log(`\n✅ ${llmsFullFile}`);
+            console.log(`\n✅ ${llmsFile}`);
         } else {
             console.log(
-                'Invalid input. Provide a valid GitHub URL or use "local".'
+                '⚠️ Invalid input. Provide a valid GitHub URL or use "local".'
             );
             Deno.exit(1);
         }
