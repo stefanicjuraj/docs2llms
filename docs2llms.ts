@@ -245,10 +245,10 @@ async function main() {
 
     if (!input) {
         console.log(
-            "Usage (local):  deno docs2llms.ts local <local_directory> [llms_txt] [llms_full_txt] [--skip <folder1> <folder2> ...]"
+            "Usage (local):  deno docs2llms.ts local <local_directory> [llms_file] [llms_full_file] [--skip <folder1> <folder2> ...]"
         );
         console.log(
-            "Usage (remote): deno docs2llms.ts <remote_directory> [llms_txt] [llms_full_txt] [--skip <folder1> <folder2> ...]"
+            "Usage (remote): deno docs2llms.ts <remote_directory> [llms_file] [llms_full_file] [--skip <folder1> <folder2> ...]"
         );
         Deno.exit(1);
     }
