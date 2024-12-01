@@ -18,7 +18,7 @@ Deno
 deno docs2llms.ts <remote_directory> [llms_file] [llms_full_file] [--skip <folder1> <folder2> ...]
 ```
 
-## Parameters
+### Parameters
 
 - `local_directory`: The local directory containing the documentation content.
 - `remote_directory`: The URL to the remote directory containing the documentation content.
