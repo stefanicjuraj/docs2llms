@@ -6,10 +6,6 @@ docs2llms transforms software documentation content into formats optimized for u
 
 ### Local
 
-Shell
-```
-sh docs2llms.sh local <local_directory> [output_file] [--skip <folder1> <folder2> ...]
-```
 Deno
 ```
 deno docs2llms.ts local <local_directory> [output_file] [--skip <folder1> <folder2> ...]
@@ -23,10 +19,6 @@ Parameters
 
 ### Remote
 
-Shell
-```
-sh docs2llms.sh <remote_directory> [output_file] [--skip <folder1> <folder2> ...]
-```
 Deno
 ```
 deno docs2llms.ts <remote_directory> [output_file] [--skip <folder1> <folder2> ...]
@@ -41,13 +33,7 @@ Parameters
 ### Examples
 
 ```
-sh docs2llms.sh local example
-```
-```
 deno docs2llms.ts local example
-```
-```
-sh docs2llms.sh https://github.com/stefanicjuraj/docs2llms/tree/main/example/docs
 ```
 ```
 deno docs2llms.ts local https://github.com/stefanicjuraj/docs2llms/tree/main/example/docs
