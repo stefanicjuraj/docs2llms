@@ -84,18 +84,18 @@ async function processDirectory(
     repo: string,
     branch: string,
     path: string,
-    llmsFullFile: string,
     llmsFile: string,
+    llmsFullFile: string,
     token?: string,
     skipFolders: string[] = []
 ): Promise<void> {
     const fileExtensions = [".md", ".mdx", ".txt", ".rst"];
-    const llmsFullWriter = await Deno.open(llmsFullFile, {
+    const llmsWriter = await Deno.open(llmsFile, {
         create: true,
         truncate: true,
         write: true,
     });
-    const llmsWriter = await Deno.open(llmsFile, {
+    const llmsFullWriter = await Deno.open(llmsFullFile, {
         create: true,
         truncate: true,
         write: true,
@@ -119,11 +119,11 @@ async function processDirectory(
                     item.path,
                     token
                 );
-                await llmsFullWriter.write(
-                    new TextEncoder().encode(rawContent + "\n\n")
-                );
                 await llmsWriter.write(
                     new TextEncoder().encode(`- [${item.name}](${itemUrl})\n`)
+                );
+                await llmsFullWriter.write(
+                    new TextEncoder().encode(rawContent + "\n\n")
                 );
                 console.log(`Processing: ${item.path}`);
             } else if (
@@ -138,8 +138,8 @@ async function processDirectory(
                     repo,
                     branch,
                     item.path,
-                    llmsFullFile,
                     llmsFile,
+                    llmsFullFile,
                     token,
                     skipFolders
                 );
@@ -148,23 +148,23 @@ async function processDirectory(
             }
         }
     } finally {
-        llmsFullWriter.close();
         llmsWriter.close();
+        llmsFullWriter.close();
     }
 }
 
 async function processLocalDirectory(
     dirPath: string,
-    llmsFullFile: string,
     llmsFile: string,
+    llmsFullFile: string,
     skipFolders: string[] = []
 ): Promise<void> {
-    const llmsFullWriter = await Deno.open(llmsFullFile, {
+    const llmsWriter = await Deno.open(llmsFile, {
         create: true,
         truncate: true,
         write: true,
     });
-    const llmsWriter = await Deno.open(llmsFile, {
+    const llmsFullWriter = await Deno.open(llmsFullFile, {
         create: true,
         truncate: true,
         write: true,
@@ -186,21 +186,21 @@ async function processLocalDirectory(
                     const filePath = `${dirPath}/${entry.name}`;
                     const fileContent = await Deno.readTextFile(filePath);
 
-                    await llmsFullWriter.write(
-                        new TextEncoder().encode(fileContent + "\n\n")
-                    );
                     await llmsWriter.write(
                         new TextEncoder().encode(
                             `- [${entry.name}](${filePath})\n`
                         )
+                    );
+                    await llmsFullWriter.write(
+                        new TextEncoder().encode(fileContent + "\n\n")
                     );
                     console.log(`Processing: ${entry.name}`);
                 }
             }
         }
     } finally {
-        llmsFullWriter.close();
         llmsWriter.close();
+        llmsFullWriter.close();
     }
 }
 
@@ -210,8 +210,8 @@ async function main() {
 
     let input: string | undefined;
     let localDocsDir = "";
-    let llmsFullFile: string | undefined;
     let llmsFile: string | undefined;
+    let llmsFullFile: string | undefined;
     let skipFolders: string[] = [];
 
     if (skipFolderIndex !== -1) {
@@ -222,28 +222,33 @@ async function main() {
     if (args.length > 0) {
         input = args[0];
         if (args[1] && input !== "local") {
-            llmsFullFile = args[1];
+            llmsFile = args[1];
         } else if (args[1]) {
             localDocsDir = args[1];
         }
         if (args[2] && input === "local") {
+            llmsFile = args[2];
+        }
+        if (args[3] && input === "local") {
+            llmsFullFile = args[3];
+        } else if (args[2] && input !== "local") {
             llmsFullFile = args[2];
         }
     }
 
-    if (!llmsFullFile) {
-        llmsFullFile = "llms-full.txt";
-    }
     if (!llmsFile) {
         llmsFile = "llms.txt";
+    }
+    if (!llmsFullFile) {
+        llmsFullFile = "llms-full.txt";
     }
 
     if (!input) {
         console.log(
-            "Usage (local):  deno docs2llms.ts local <local_directory> [output_file] [--skip <folder1> <folder2> ...]"
+            "Usage (local):  deno docs2llms.ts local <local_directory> [llms_txt] [llms_full_txt] [--skip <folder1> <folder2> ...]"
         );
         console.log(
-            "Usage (remote): deno docs2llms.ts <remote_directory> [output_file] [--skip <folder1> <folder2> ...]"
+            "Usage (remote): deno docs2llms.ts <remote_directory> [llms_txt] [llms_full_txt] [--skip <folder1> <folder2> ...]"
         );
         Deno.exit(1);
     }
@@ -254,12 +259,12 @@ async function main() {
         if (input === "local") {
             await processLocalDirectory(
                 localDocsDir,
-                llmsFullFile,
                 llmsFile,
+                llmsFullFile,
                 skipFolders
             );
-            console.log(`\n✅ ${llmsFullFile}`);
             console.log(`\n✅ ${llmsFile}`);
+            console.log(`\n✅ ${llmsFullFile}`);
         } else if (validateGitHubURL(input)) {
             const { owner, repo, branch, path } = parseGitHubURL(input);
 
@@ -278,13 +283,13 @@ async function main() {
                 repo,
                 branch,
                 path,
-                llmsFullFile,
                 llmsFile,
+                llmsFullFile,
                 token,
                 skipFolders
             );
-            console.log(`\n✅ ${llmsFullFile}`);
             console.log(`\n✅ ${llmsFile}`);
+            console.log(`\n✅ ${llmsFullFile}`);
         } else {
             console.log(
                 '⚠️ Invalid input. Provide a valid GitHub URL or use "local".'
