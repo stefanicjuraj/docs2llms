@@ -186,12 +186,12 @@ async function main() {
 Usage (local): docs2llms --local /path/to/directory
 Usage (remote): docs2llms https://github.com/username/repository
 
---llms: Output file for the processed documentation pages. Defaults to llms.txt.
---llms-full: Output file for the full processed documentation content. Defaults to llms-full.txt.
---skip: Folders to skip when processing the documentation content.
---format: Format of the processed documentation content. Available: txt, md, rst. Defaults to txt.
---preview: Preview directories and files to be processed. Does not create output files.
---interactive: Interactively select individual files to be processed. 
+--llms: Output file for extracted content hyperlinks. Defaults to llms.txt.
+--llms-full: Output file for processed content. Defaults to llms-full.txt.
+--skip: Folders to skip during processing.
+--format: Format for the processed content. Available: txt, md, rst. Defaults to txt.
+--preview: Preview the content in the terminal. Does not process content.
+--interactive: Interactively select individual files to be processed.
             `);
         Deno.exit(1);
     }
