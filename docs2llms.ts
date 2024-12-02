@@ -142,6 +142,7 @@ async function main() {
     const skipFolders: string[] = [];
     let githubUrl = "";
     let preview = false;
+    let interactive = false;
 
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
@@ -167,6 +168,9 @@ async function main() {
             case "--preview":
                 preview = true;
                 break;
+            case "--interactive":
+                interactive = true;
+                break;
             default:
                 if (validateGitHubURL(args[i])) {
                     githubUrl = args[i];
@@ -186,7 +190,8 @@ Usage (remote): docs2llms https://github.com/username/repository
 --llms-full: Output file for the full processed documentation content. Defaults to llms-full.txt.
 --skip: Folders to skip when processing the documentation content.
 --format: Format of the processed documentation content. Available: txt, md, rst. Defaults to txt.
---preview: Preview directories and files to be processed. Does not create output files.       
+--preview: Preview directories and files to be processed. Does not create output files.
+--interactive: Interactively select individual files to be processed. 
             `);
         Deno.exit(1);
     }
@@ -221,6 +226,24 @@ Usage (remote): docs2llms https://github.com/username/repository
         if (preview) {
             console.log("🕵️ Preview of directories and files to be processed.");
             console.log("🗂️ Files:", files);
+        } else if (interactive) {
+            const confirmFiles: string[] = [];
+            const confirmFullPaths: string[] = [];
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fullPath = fullPaths[i];
+                const userInput = prompt(`(${i + 1}/${files.length}): ${file}? (y/n)`);
+                if (userInput?.toLowerCase() === 'y') {
+                    confirmFiles.push(file);
+                    confirmFullPaths.push(fullPath);
+                }
+            }
+
+            await writeFiles(llmsFile, llmsFullFile, confirmFiles, confirmFullPaths);
+
+            console.log(`\n✅ ${llmsFile}`);
+            console.log(`\n✅ ${llmsFullFile}`);
         } else {
             await writeFiles(llmsFile, llmsFullFile, files, fullPaths);
 
@@ -228,7 +251,7 @@ Usage (remote): docs2llms https://github.com/username/repository
             console.log(`\n✅ ${llmsFullFile}`);
         }
 
-        if (githubUrl && !preview) {
+        if (githubUrl && !preview && !interactive) {
             await Deno.remove(dirPath, { recursive: true });
         }
     } catch (error) {
