@@ -21,7 +21,7 @@ docs2llms --local /path/to/directory
 ### Remote
 
 ```
-docs2llms https://github.com/username/repository
+docs2llms username/repository
 ```
 
 ### Options
@@ -45,20 +45,20 @@ docs2llms https://github.com/username/repository
 docs2llms --local path/to/directory
 
 # From a remote repository
-docs2llms https://github.com/username/repository
+docs2llms username/repository
 
 # Custom output files
-docs2llms https://github.com/username/repository --llms llms-file.txt --llms-full llms-full-file.txt
+docs2llms username/repository --llms llms-file.txt --llms-full llms-full-file.txt
 
 # Custom format
-docs2llms https://github.com/username/repository --format txt
+docs2llms username/repository --format txt
 
 # Skip folders
-docs2llms https://github.com/username/repository --skip api,examples
+docs2llms username/repository --skip api,examples
 
 # Preview the processed content
-docs2llms https://github.com/username/repository --preview
+docs2llms username/repository --preview
 
 # Interactively select individual files
-docs2llms https://github.com/username/repository --interactive
+docs2llms username/repository --interactive
 ```
