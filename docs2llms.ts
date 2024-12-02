@@ -170,6 +170,7 @@ async function main() {
     const skipFolders: string[] = [];
     let githubUrl = "";
     let gitlabUrl = "";
+    let branch = "main";
     let preview = false;
     let interactive = false;
 
@@ -210,6 +211,9 @@ async function main() {
                     gitlabUrl = args[i].startsWith("https://gitlab.com/") ? args[i] : `https://gitlab.com/${args[i]}`;
                 }
                 break;
+            case "--branch":
+                branch = args[++i];
+                break;
         }
     }
 
@@ -228,6 +232,7 @@ Usage (remote): docs2llms --github username/repository
 --format: Format for the processed content. Available: txt, md, rst. Defaults to txt.
 --preview: Preview the content in the terminal. Does not process content.
 --interactive: Interactively select individual files to be processed.
+--branch: The repository branch to clone from. Defaults to main.
             `);
         Deno.exit(1);
     }
@@ -237,20 +242,20 @@ Usage (remote): docs2llms --github username/repository
         if (localDocsDir) {
             dirPath = localDocsDir;
         } else if (githubUrl) {
-            const { owner, repo, branch, path } = parseGitHubURL(githubUrl);
+            const { owner, repo, branch: urlBranch, path } = parseGitHubURL(githubUrl);
             dirPath = await cloneRepository(
                 `https://github.com/${owner}/${repo}.git`,
-                branch
+                branch || urlBranch
             );
 
             if (path) {
                 dirPath = join(dirPath, path);
             }
         } else if (gitlabUrl) {
-            const { owner, repo, branch, path } = parseGitLabURL(gitlabUrl);
+            const { owner, repo, branch: urlBranch, path } = parseGitLabURL(gitlabUrl);
             dirPath = await cloneRepository(
                 `https://gitlab.com/${owner}/${repo}.git`,
-                branch
+                branch || urlBranch
             );
 
             if (path) {
