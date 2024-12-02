@@ -1,6 +1,6 @@
 # docs2llms
 
-docs2llms transforms software documentation content into formats optimized for use by AI and large language models (LLMs).
+Transform software documentation content into formats optimized for use by artificial intelligence (AI) and large language models (LLMs). 
 
 ## Installation
 
@@ -12,19 +12,17 @@ deno install --allow-read --allow-net --unstable --global -n docs2llms https://r
 
 ### Local
 
-Deno
 ```
-deno docs2llms.ts local <local_directory> [llms_file] [llms_full_file] [--skip <folder1> <folder2> ...]
+docs2llms local <local_directory> [llms_file] [llms_full_file] [--skip <folder1> <folder2> ...]
 ```
 
 ### Remote
 
-Deno
 ```
-deno docs2llms.ts <remote_directory> [llms_file] [llms_full_file] [--skip <folder1> <folder2> ...]
+docs2llms <remote_directory> [llms_file] [llms_full_file] [--skip <folder1> <folder2> ...]
 ```
 
-### Parameters
+### Options
 
 - `local_directory`: The local directory containing the documentation content.
 - `remote_directory`: The URL to the remote directory containing the documentation content.
@@ -35,8 +33,8 @@ deno docs2llms.ts <remote_directory> [llms_file] [llms_full_file] [--skip <folde
 ### Examples
 
 ```
-deno docs2llms.ts local example/docs
+docs2llms local example/docs
 ```
 ```
-deno docs2llms.ts remote https://github.com/stefanicjuraj/docs2llms/tree/main/example/docs
+docs2llms remote https://github.com/stefanicjuraj/docs2llms/tree/main/example/docs
 ```
