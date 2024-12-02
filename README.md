@@ -26,12 +26,17 @@ docs2llms https://github.com/username/repository
 
 ### Options
 
-- `--llms`: Output file for the processed documentation pages. Defaults to `llms.txt`.
-- `--llms-full`: Output file for the full processed documentation content. Defaults to `llms-full.txt`.
-- `--skip`: Folders to skip when processing the documentation content.
-- `--format`: Format of the processed documentation content. Available: `txt`, `md`, `rst`. Defaults to `txt`.
-- `--preview`: Preview the processed documentation content in the terminal. Does not create output files.
-- `--interactive`: Interactively select individual files to be processed.
+&rarr; **`--llms`**: Output file for the processed documentation pages. Defaults to `llms.txt`.
+
+&rarr; **`--llms-full`**: Output file for the full processed documentation content. Defaults to `llms-full.txt`.
+
+&rarr; **`--skip`**: Folders to skip when processing the documentation content.
+
+&rarr; **`--format`**: Format of the processed documentation content. Available: `txt`, `md`, `rst`. Defaults to `txt`.
+
+&rarr; **`--preview`**: Preview the processed documentation content in the terminal. Does not create output files.
+
+&rarr; **`--interactive`**: Interactively select individual files to be processed.
 
 ### Examples
 
