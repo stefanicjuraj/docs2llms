@@ -44,6 +44,8 @@ docs2llms --gitlab username/repository
 
 &rarr; **`--branch`**: The repository branch to clone from. Defaults to `main`.
 
+&rarr; **`--summary`**: Display a summary of the processed content.
+
 &rarr; **`--preview`**: Preview the content in the terminal. Does not process content.
 
 &rarr; **`--interactive`**: Interactively select individual files to be processed.
@@ -69,7 +71,10 @@ docs2llms --github username/repository --branch main
 # Skip folders
 docs2llms --github username/repository --skip api,examples
 
-# Preview the processed content
+# Summarize processed content
+docs2llms --github username/repository --summary
+
+# Preview processed content
 docs2llms --github username/repository --preview
 
 # Interactively select individual files
