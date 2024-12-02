@@ -7,7 +7,7 @@ docs2llms is a command-line tool built with Deno and TypeScript. It uses the [ll
 ## Installation
 
 ```
-deno install -n docs2llms https://raw.githubusercontent.com/stefanicjuraj/docs2llms/main/docs2llms.ts --allow-read --allow-net --global -f
+deno install -n docs2llms https://raw.githubusercontent.com/stefanicjuraj/docs2llms/main/docs2llms.ts --allow-read --allow-net --allow-write --allow-run --global -f
 ```
 
 ## Usage
@@ -26,7 +26,6 @@ docs2llms https://github.com/username/repository
 
 ### Options
 
-- `--local`: Local directory containing the documentation content.
 - `--llms`: Output file for the processed documentation pages. Defaults to `llms.txt`.
 - `--llms-full`: Output file for the full processed documentation content. Defaults to `llms-full.txt`.
 - `--skip`: Folders to skip when processing the documentation content.
