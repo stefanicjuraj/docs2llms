@@ -26,8 +26,9 @@ docs2llms https://github.com/username/repository
 
 - `--local`: Local directory containing the documentation content.
 - `--llms`: Output file for the processed documentation pages. Defaults to `llms.txt`.
-- `-llms-full`: Output file for the full processed documentation content. Defaults to `llms-full.txt`.
+- `--llms-full`: Output file for the full processed documentation content. Defaults to `llms-full.txt`.
 - `--skip`: Folders to skip when processing the documentation content.
+- `--format`: Format of the processed documentation content. Available: `txt`, `md`, `rst`. Defaults to `txt`.
 
 ### Examples
 
