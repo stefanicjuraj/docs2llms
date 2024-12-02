@@ -8,16 +8,38 @@ function validateGitHubURL(url: string): boolean {
     return GitHubURLPattern.test(url);
 }
 
-interface GitHubURL {
+function validateGitLabURL(url: string): boolean {
+    const GitLabURLPattern =
+        /^(https:\/\/gitlab\.com\/|[^/]+\/[^/]+$)/;
+    return GitLabURLPattern.test(url);
+}
+
+interface RepositoryURL {
     owner: string;
     repo: string;
     branch: string;
     path: string;
 }
 
-function parseGitHubURL(url: string): GitHubURL {
+function parseGitHubURL(url: string): RepositoryURL {
     let owner, repo, branch = "main", path = "";
     if (url.startsWith("https://github.com/")) {
+        const urlParts = url.split("/");
+        owner = urlParts[3];
+        repo = urlParts[4];
+        branch = urlParts[6] || "main";
+        path = urlParts.slice(7).join("/") || "";
+    } else {
+        const urlParts = url.split("/");
+        owner = urlParts[0];
+        repo = urlParts[1];
+    }
+    return { owner, repo, branch, path };
+}
+
+function parseGitLabURL(url: string): RepositoryURL {
+    let owner, repo, branch = "main", path = "";
+    if (url.startsWith("https://gitlab.com/")) {
         const urlParts = url.split("/");
         owner = urlParts[3];
         repo = urlParts[4];
@@ -147,6 +169,7 @@ async function main() {
     let format = "txt";
     const skipFolders: string[] = [];
     let githubUrl = "";
+    let gitlabUrl = "";
     let preview = false;
     let interactive = false;
 
@@ -177,20 +200,27 @@ async function main() {
             case "--interactive":
                 interactive = true;
                 break;
-            default:
-                if (validateGitHubURL(args[i])) {
+            case "--github":
+                if (validateGitHubURL(args[++i])) {
                     githubUrl = args[i].startsWith("https://github.com/") ? args[i] : `https://github.com/${args[i]}`;
                 }
+                break;
+            case "--gitlab":
+                if (validateGitLabURL(args[++i])) {
+                    gitlabUrl = args[i].startsWith("https://gitlab.com/") ? args[i] : `https://gitlab.com/${args[i]}`;
+                }
+                break;
         }
     }
 
     const llmsFile = `${llmsBaseName}.${format}`;
     const llmsFullFile = `${llmsFullBaseName}.${format}`;
 
-    if (!localDocsDir && !githubUrl) {
+    if (!localDocsDir && !githubUrl && !gitlabUrl) {
         console.log(`
-Usage (local): docs2llms --local /path/to/directory
-Usage (remote): docs2llms username/repository
+Usage (local):  docs2llms --local /path/to/directory
+Usage (remote): docs2llms --github username/repository
+                docs2llms --gitlab username/repository
 
 --llms: Output file for extracted content hyperlinks. Defaults to llms.txt.
 --llms-full: Output file for processed content. Defaults to llms-full.txt.
@@ -216,9 +246,19 @@ Usage (remote): docs2llms username/repository
             if (path) {
                 dirPath = join(dirPath, path);
             }
+        } else if (gitlabUrl) {
+            const { owner, repo, branch, path } = parseGitLabURL(gitlabUrl);
+            dirPath = await cloneRepository(
+                `https://gitlab.com/${owner}/${repo}.git`,
+                branch
+            );
+
+            if (path) {
+                dirPath = join(dirPath, path);
+            }
         } else {
             console.log(
-                '⚠️ Invalid input. Provide a valid GitHub URL or use "--local".'
+                '⚠️ Invalid input. Provide a valid GitHub or GitLab URL or use "--local".'
             );
             Deno.exit(1);
         }
@@ -257,7 +297,7 @@ Usage (remote): docs2llms username/repository
             console.log(`\n✅ ${llmsFullFile}`);
         }
 
-        if (githubUrl && !preview && !interactive) {
+        if ((githubUrl || gitlabUrl) && !preview && !interactive) {
             await Deno.remove(dirPath, { recursive: true });
         }
     } catch (error) {
