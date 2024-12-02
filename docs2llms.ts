@@ -173,6 +173,7 @@ async function main() {
     let branch = "main";
     let preview = false;
     let interactive = false;
+    let summary = false;
 
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
@@ -200,6 +201,9 @@ async function main() {
                 break;
             case "--interactive":
                 interactive = true;
+                break;
+            case "--summary":
+                summary = true;
                 break;
             case "--github":
                 if (validateGitHubURL(args[++i])) {
@@ -232,6 +236,7 @@ Usage (remote): docs2llms --github username/repository
 --format: Format for the processed content. Available: txt, md, rst. Defaults to txt.
 --preview: Preview the content in the terminal. Does not process content.
 --interactive: Interactively select individual files to be processed.
+--summary: Display a summary of the processed content.
 --branch: The repository branch to clone from. Defaults to main.
             `);
         Deno.exit(1);
@@ -276,7 +281,7 @@ Usage (remote): docs2llms --github username/repository
 
         if (preview) {
             console.log("🕵️ Preview of directories and files to be processed.");
-            console.log("🗂️ Files:", files);
+            console.log("🗂️ :", files);
         } else if (interactive) {
             const confirmFiles: string[] = [];
             const confirmFullPaths: string[] = [];
@@ -300,6 +305,11 @@ Usage (remote): docs2llms --github username/repository
 
             console.log(`\n✅ ${llmsFile}`);
             console.log(`\n✅ ${llmsFullFile}`);
+        }
+
+        if (summary) {
+            console.log("📄 Summary of processed directories and files:");
+            console.log("🗂️ :", files);
         }
 
         if ((githubUrl || gitlabUrl) && !preview && !interactive) {
