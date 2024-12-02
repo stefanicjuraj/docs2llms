@@ -190,7 +190,7 @@ async function main() {
     if (!localDocsDir && !githubUrl) {
         console.log(`
 Usage (local): docs2llms --local /path/to/directory
-Usage (remote): docs2llms https://github.com/username/repository
+Usage (remote): docs2llms username/repository
 
 --llms: Output file for extracted content hyperlinks. Defaults to llms.txt.
 --llms-full: Output file for processed content. Defaults to llms-full.txt.
