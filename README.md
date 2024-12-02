@@ -2,6 +2,12 @@
 
 docs2llms transforms software documentation content into formats optimized for use by AI and large language models (LLMs).
 
+## Installation
+
+```
+deno install --allow-read --allow-net --unstable --global -n docs2llms https://raw.githubusercontent.com/stefanicjuraj/docs2llms/main/docs2llms.ts
+```
+
 ## Usage
 
 ### Local
