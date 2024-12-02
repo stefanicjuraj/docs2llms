@@ -5,7 +5,7 @@ Transform software documentation content into formats optimized for use by artif
 ## Installation
 
 ```
-deno install --allow-read --allow-net --unstable --global -n docs2llms https://raw.githubusercontent.com/stefanicjuraj/docs2llms/main/docs2llms.ts
+deno install -n docs2llms https://raw.githubusercontent.com/stefanicjuraj/docs2llms/main/docs2llms.ts --allow-read --allow-net --global -f
 ```
 
 ## Usage
@@ -13,28 +13,25 @@ deno install --allow-read --allow-net --unstable --global -n docs2llms https://r
 ### Local
 
 ```
-docs2llms local <local_directory> [llms_file] [llms_full_file] [--skip <folder1> <folder2> ...]
+docs2llms --local /path/to/directory
 ```
 
 ### Remote
 
 ```
-docs2llms <remote_directory> [llms_file] [llms_full_file] [--skip <folder1> <folder2> ...]
+docs2llms https://github.com/username/repository
 ```
 
 ### Options
 
-- `local_directory`: The local directory containing the documentation content.
-- `remote_directory`: The URL to the remote directory containing the documentation content.
-- `llms_file`: The output file for the processed content. Defaults to `llms.txt`.
-- `llms_full_file`: The output file for the processed content. Defaults to `llms-full.txt`.
-- `--skip`: The flag to skip specific folders during processing.
+- `--local`: Local directory containing the documentation content.
+- `--llms`: Output file for the processed documentation pages. Defaults to `llms.txt`.
+- `-llms-full`: Output file for the full processed documentation content. Defaults to `llms-full.txt`.
+- `--skip`: Folders to skip when processing the documentation content.
 
 ### Examples
 
 ```
-docs2llms local example/docs
-```
-```
-docs2llms remote https://github.com/stefanicjuraj/docs2llms/tree/main/example/docs
+docs2llms --local example/docs
+docs2llms https://github.com/stefanicjuraj/docs2llms
 ```
