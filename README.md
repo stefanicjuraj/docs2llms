@@ -1,6 +1,8 @@
 # docs2llms
 
-Transform software documentation content into formats optimized for use by artificial intelligence (AI) and large language models (LLMs). 
+**Transform software documentation content into formats optimized for use by AI and LLMs.** 
+
+docs2llms is a command-line tool built with Deno and TypeScript. It uses the [llms.txt](https://llmstxt.org/) standard to provide a consistent format for the AI and LLMs to consume.
 
 ## Installation
 
@@ -32,7 +34,19 @@ docs2llms https://github.com/username/repository
 
 ### Examples
 
-```
-docs2llms --local example/docs
-docs2llms https://github.com/stefanicjuraj/docs2llms
+```bash
+# From a local directory
+docs2llms --local path/to/directory
+
+# From a remote repository
+docs2llms https://github.com/username/repository
+
+# Custom output files
+docs2llms https://github.com/username/repository --llms llms-file.txt --llms-full llms-full-file.txt
+
+# Custom format
+docs2llms https://github.com/username/repository --format txt
+
+# Skip folders
+docs2llms https://github.com/username/repository --skip api,examples
 ```
