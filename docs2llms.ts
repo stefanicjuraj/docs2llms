@@ -4,7 +4,7 @@ import { join, relative, basename } from "https://deno.land/std/path/mod.ts";
 
 function validateGitHubURL(url: string): boolean {
     const GitHubURLPattern =
-        /^https:\/\/github\.com\/[^/]+\/[^/]+(\/(tree\/[^/]+\/.+)?)?$/;
+        /^(https:\/\/github\.com\/|[^/]+\/[^/]+$)/;
     return GitHubURLPattern.test(url);
 }
 
@@ -16,13 +16,19 @@ interface GitHubURL {
 }
 
 function parseGitHubURL(url: string): GitHubURL {
-    const urlParts = url.split("/");
-    return {
-        owner: urlParts[3],
-        repo: urlParts[4],
-        branch: urlParts[6] || "main",
-        path: urlParts.slice(7).join("/") || "",
-    };
+    let owner, repo, branch = "main", path = "";
+    if (url.startsWith("https://github.com/")) {
+        const urlParts = url.split("/");
+        owner = urlParts[3];
+        repo = urlParts[4];
+        branch = urlParts[6] || "main";
+        path = urlParts.slice(7).join("/") || "";
+    } else {
+        const urlParts = url.split("/");
+        owner = urlParts[0];
+        repo = urlParts[1];
+    }
+    return { owner, repo, branch, path };
 }
 
 function skipDirectory(dirName: string, skipFolders: string[]): boolean {
@@ -173,7 +179,7 @@ async function main() {
                 break;
             default:
                 if (validateGitHubURL(args[i])) {
-                    githubUrl = args[i];
+                    githubUrl = args[i].startsWith("https://github.com/") ? args[i] : `https://github.com/${args[i]}`;
                 }
         }
     }
