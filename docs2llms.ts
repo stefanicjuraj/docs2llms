@@ -36,7 +36,14 @@ function skipDirectory(dirName: string, skipFolders: string[]): boolean {
 async function cloneRepository(url: string, branch: string): Promise<string> {
     const temporaryDirectory = await Deno.makeTempDir();
     const cloneCommand = new Deno.Command("git", {
-        args: ["clone", "-b", branch, "--single-branch", url, temporaryDirectory],
+        args: [
+            "clone",
+            "-b",
+            branch,
+            "--single-branch",
+            url,
+            temporaryDirectory,
+        ],
         stdout: "piped",
         stderr: "piped",
     });
@@ -129,8 +136,9 @@ async function main() {
     const args = Deno.args;
 
     let localDocsDir = "";
-    let llmsFile = "llms.txt";
-    let llmsFullFile = "llms-full.txt";
+    let llmsBaseName = "llms";
+    let llmsFullBaseName = "llms-full";
+    let format = "txt";
     const skipFolders: string[] = [];
     let githubUrl = "";
 
@@ -140,10 +148,13 @@ async function main() {
                 localDocsDir = args[++i];
                 break;
             case "--llms":
-                llmsFile = args[++i];
+                llmsBaseName = args[++i];
                 break;
             case "--llms-full":
-                llmsFullFile = args[++i];
+                llmsFullBaseName = args[++i];
+                break;
+            case "--format":
+                format = args[++i].replace(/^\./, "");
                 break;
             case "--skip":
                 i++;
@@ -159,13 +170,19 @@ async function main() {
         }
     }
 
+    const llmsFile = `${llmsBaseName}.${format}`;
+    const llmsFullFile = `${llmsFullBaseName}.${format}`;
+
     if (!localDocsDir && !githubUrl) {
-        console.log(
-            "Usage (local):  docs2llms --local <local_directory> [--llms <llms_file>] [--llms-full <llms_full_file>] [--skip <folder1> <folder2> ...]"
-        );
-        console.log(
-            "Usage (remote): docs2llms <remote_github_url> [--llms <llms_file>] [--llms-full <llms_full_file>] [--skip <folder1> <folder2> ...]"
-        );
+        console.log(`
+Usage (local): docs2llms --local /path/to/directory
+Usage (remote): docs2llms https://github.com/username/repository
+
+--llms: Output file for the processed documentation pages. Defaults to llms.txt.
+--llms-full: Output file for the full processed documentation content. Defaults to llms-full.txt.
+--skip: Folders to skip when processing the documentation content.
+--format: Format of the processed documentation content. Available: txt, md, rst. Defaults to txt.       
+            `);
         Deno.exit(1);
     }
 
