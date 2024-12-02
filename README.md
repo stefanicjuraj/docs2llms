@@ -31,6 +31,7 @@ docs2llms https://github.com/username/repository
 - `--skip`: Folders to skip when processing the documentation content.
 - `--format`: Format of the processed documentation content. Available: `txt`, `md`, `rst`. Defaults to `txt`.
 - `--preview`: Preview the processed documentation content in the terminal. Does not create output files.
+- `--interactive`: Interactively select individual files to be processed.
 
 ### Examples
 
@@ -52,4 +53,7 @@ docs2llms https://github.com/username/repository --skip api,examples
 
 # Preview the processed content
 docs2llms https://github.com/username/repository --preview
+
+# Interactively select individual files
+docs2llms https://github.com/username/repository --interactive
 ```
