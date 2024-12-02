@@ -60,7 +60,7 @@ docs2llms --local path/to/directory
 docs2llms --github username/repository
 
 # Custom output files
-docs2llms --github username/repository --llms llms-file.txt --llms-full llms-full-file.txt
+docs2llms --github username/repository --llms llms-file --llms-full llms-full-file.txt
 
 # Custom format
 docs2llms --github username/repository --format txt
