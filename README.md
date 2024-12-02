@@ -42,6 +42,8 @@ docs2llms --gitlab username/repository
 
 &rarr; **`--format`**: Format for the processed content. Available: `txt`, `md`, `rst`. Defaults to `txt`.
 
+&rarr; **`--branch`**: The repository branch to clone from. Defaults to `main`.
+
 &rarr; **`--preview`**: Preview the content in the terminal. Does not process content.
 
 &rarr; **`--interactive`**: Interactively select individual files to be processed.
@@ -60,6 +62,9 @@ docs2llms --github username/repository --llms llms-file.txt --llms-full llms-ful
 
 # Custom format
 docs2llms --github username/repository --format txt
+
+# Specify branch
+docs2llms --github username/repository --branch main
 
 # Skip folders
 docs2llms --github username/repository --skip api,examples
