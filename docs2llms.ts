@@ -141,6 +141,7 @@ async function main() {
     let format = "txt";
     const skipFolders: string[] = [];
     let githubUrl = "";
+    let preview = false;
 
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
@@ -163,6 +164,9 @@ async function main() {
                 }
                 i--;
                 break;
+            case "--preview":
+                preview = true;
+                break;
             default:
                 if (validateGitHubURL(args[i])) {
                     githubUrl = args[i];
@@ -181,7 +185,8 @@ Usage (remote): docs2llms https://github.com/username/repository
 --llms: Output file for the processed documentation pages. Defaults to llms.txt.
 --llms-full: Output file for the full processed documentation content. Defaults to llms-full.txt.
 --skip: Folders to skip when processing the documentation content.
---format: Format of the processed documentation content. Available: txt, md, rst. Defaults to txt.       
+--format: Format of the processed documentation content. Available: txt, md, rst. Defaults to txt.
+--preview: Preview directories and files to be processed. Does not create output files.       
             `);
         Deno.exit(1);
     }
@@ -213,12 +218,17 @@ Usage (remote): docs2llms https://github.com/username/repository
             skipFolders
         );
 
-        await writeFiles(llmsFile, llmsFullFile, files, fullPaths);
+        if (preview) {
+            console.log("🕵️ Preview of directories and files to be processed.");
+            console.log("🗂️ Files:", files);
+        } else {
+            await writeFiles(llmsFile, llmsFullFile, files, fullPaths);
 
-        console.log(`\n✅ ${llmsFile}`);
-        console.log(`\n✅ ${llmsFullFile}`);
+            console.log(`\n✅ ${llmsFile}`);
+            console.log(`\n✅ ${llmsFullFile}`);
+        }
 
-        if (githubUrl) {
+        if (githubUrl && !preview) {
             await Deno.remove(dirPath, { recursive: true });
         }
     } catch (error) {
