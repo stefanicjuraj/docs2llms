@@ -30,6 +30,7 @@ docs2llms https://github.com/username/repository
 - `--llms-full`: Output file for the full processed documentation content. Defaults to `llms-full.txt`.
 - `--skip`: Folders to skip when processing the documentation content.
 - `--format`: Format of the processed documentation content. Available: `txt`, `md`, `rst`. Defaults to `txt`.
+- `--preview`: Preview the processed documentation content in the terminal. Does not create output files.
 
 ### Examples
 
@@ -48,4 +49,7 @@ docs2llms https://github.com/username/repository --format txt
 
 # Skip folders
 docs2llms https://github.com/username/repository --skip api,examples
+
+# Preview the processed content
+docs2llms https://github.com/username/repository --preview
 ```
