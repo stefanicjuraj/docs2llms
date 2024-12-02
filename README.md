@@ -56,8 +56,11 @@ docs2llms --gitlab username/repository
 # From a local directory
 docs2llms --local path/to/directory
 
-# From a remote repository
+# From a GitHub repository
 docs2llms --github username/repository
+
+# From a GitLab repository
+docs2llms --gitlab username/repository
 
 # Custom output files
 docs2llms --github username/repository --llms llms-file --llms-full llms-full-file
