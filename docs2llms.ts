@@ -89,7 +89,8 @@ async function cloneRepository(url: string, branch: string): Promise<string> {
 async function getDirectory(
     dirPath: string,
     basePath: string,
-    skipFolders: string[] = []
+    skipFolders: string[] = [],
+    maxSize: number = Infinity
 ): Promise<{ files: string[]; fullPaths: string[] }> {
     const files: string[] = [];
     const fullPaths: string[] = [];
@@ -108,9 +109,12 @@ async function getDirectory(
                     entry.name.endsWith(ext)
                 )
             ) {
-                const relativePath = relative(basePath, fullEntryPath);
-                files.push(relativePath);
-                fullPaths.push(fullEntryPath);
+                const fileInfo = await Deno.stat(fullEntryPath);
+                if (fileInfo.size <= maxSize * 1024 * 1024) {
+                    const relativePath = relative(basePath, fullEntryPath);
+                    files.push(relativePath);
+                    fullPaths.push(fullEntryPath);
+                }
             } else if (entry.isDirectory) {
                 await processDirectory(fullEntryPath);
             }
@@ -174,6 +178,7 @@ async function main() {
     let preview = false;
     let interactive = false;
     let summary = false;
+    let maxSize = Infinity;
 
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
@@ -204,6 +209,9 @@ async function main() {
                 break;
             case "--summary":
                 summary = true;
+                break;
+            case "--max-size":
+                maxSize = parseFloat(args[++i]);
                 break;
             case "--github":
                 if (validateGitHubURL(args[++i])) {
@@ -237,6 +245,7 @@ Usage (remote): docs2llms --github username/repository
 --preview: Preview the content in the terminal. Does not process content.
 --interactive: Interactively select individual files to be processed.
 --summary: Display a summary of the processed content.
+--max-size: Skip files larger than the specified size (in MB).
 --branch: The repository branch to clone from. Defaults to main.
             `);
         Deno.exit(1);
@@ -276,7 +285,8 @@ Usage (remote): docs2llms --github username/repository
         const { files, fullPaths } = await getDirectory(
             dirPath,
             dirPath,
-            skipFolders
+            skipFolders,
+            maxSize
         );
 
         if (preview) {
