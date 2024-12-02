@@ -118,7 +118,7 @@ async function writeFiles(
     });
 
     try {
-        await llmsWriter.write(new TextEncoder().encode(`# docs\n\n`));
+        await llmsWriter.write(new TextEncoder().encode(`# \n\n`));
 
         for (const file of files) {
             await llmsWriter.write(
