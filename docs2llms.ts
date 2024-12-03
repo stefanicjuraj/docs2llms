@@ -14,7 +14,10 @@ interface RepositoryURL {
 }
 
 function parseURL(url: string, baseUrl: string): RepositoryURL {
-  let owner, repo, branch = "main", path = "";
+  let owner,
+    repo,
+    branch = "main",
+    path = "";
   if (url.startsWith(baseUrl)) {
     const urlParts = url.split("/");
     owner = urlParts[3];
@@ -40,7 +43,14 @@ function skipDirectory(dirName: string, skipFolders: string[]): boolean {
 async function cloneRepository(url: string, branch: string): Promise<string> {
   const temporaryDirectory = await Deno.makeTempDir();
   const cloneCommand = new Deno.Command("git", {
-    args: ["clone", "-b", branch, "--single-branch", url, temporaryDirectory],
+    args: [
+      "clone",
+      "-b",
+      branch,
+      "--single-branch",
+      url,
+      temporaryDirectory,
+    ],
     stdout: "piped",
     stderr: "piped",
   });
@@ -177,7 +187,9 @@ async function analyzeFiles(files: string[], fullPaths: string[]) {
   console.log(`Total files: ${files.length}`);
   console.log(`Total words: ${totalWords}`);
   console.log(`Average file size: ${averageSize.toFixed(2)} MB`);
-  console.log(`\nUse the --preview option to view content in the terminal before processing.`);
+  console.log(
+    `\nUse the --preview option to view content in the terminal before processing.`,
+  );
 }
 
 async function main() {
@@ -236,7 +248,10 @@ async function main() {
         break;
       case "--github":
         if (
-          validateURL(args[++i], /^(https:\/\/github\.com\/|[^/]+\/[^/]+$)/)
+          validateURL(
+            args[++i],
+            /^(https:\/\/github\.com\/|[^/]+\/[^/]+$)/,
+          )
         ) {
           githubUrl = args[i].startsWith("https://github.com/")
             ? args[i]
@@ -245,7 +260,10 @@ async function main() {
         break;
       case "--gitlab":
         if (
-          validateURL(args[++i], /^(https:\/\/gitlab\.com\/|[^/]+\/[^/]+$)/)
+          validateURL(
+            args[++i],
+            /^(https:\/\/gitlab\.com\/|[^/]+\/[^/]+$)/,
+          )
         ) {
           gitlabUrl = args[i].startsWith("https://gitlab.com/")
             ? args[i]
@@ -272,21 +290,33 @@ Usage (remote): docs2llms --github username/repository
 
 --llms: Output file for extracted content hyperlinks. Defaults to llms.txt.
 --llms-full: Output file for processed content. Defaults to llms-full.txt.
---skip: Folders to skip during processing.
---format: Format for the processed content. Available: txt, md, rst. Defaults to txt.
---preview: Preview the content in the terminal. Does not process content.
---interactive: Interactively select individual files to be processed.
---summary: Display a summary of the processed content.
---analyze: Provide an analysis report of the content (file and word counts, average file size).
---max-size: Skip files larger than the specified size (in MB).
+--format: Format of the processed content. Available: txt, md, rst. Defaults to txt.
 --branch: The repository branch to clone from. Defaults to main.
---output-dir: Specify the output directory. Defaults to current directory.
+--output-dir: The output directory of the processed content. Defaults to the current directory.
+--skip: Folders to skip during processing.
+--summary: Display a summary of the processed content.
+--analyze: Analysis report of the content (file and word counts, average file size).
+--preview: Preview the content in the terminal before processing.
+--interactive: Manually select and confirm each file to be processed.
             `);
     Deno.exit(1);
   }
 
-  if ((preview || interactive) && (summary || analyze || maxSize !== Infinity || skipFolders.length > 0 || llmsBaseName !== "llms" || llmsFullBaseName !== "llms-full" || format !== "txt" || branch !== "main" || outputDir !== ".")) {
-    console.log('⚠️ The --preview and --interactive options cannot be combined with other options.');
+  if (
+    (preview || interactive) &&
+    (summary ||
+      analyze ||
+      maxSize !== Infinity ||
+      skipFolders.length > 0 ||
+      llmsBaseName !== "llms" ||
+      llmsFullBaseName !== "llms-full" ||
+      format !== "txt" ||
+      branch !== "main" ||
+      outputDir !== ".")
+  ) {
+    console.log(
+      "⚠️ The --preview and --interactive options cannot be combined with other options.",
+    );
     Deno.exit(1);
   }
 
@@ -295,10 +325,12 @@ Usage (remote): docs2llms --github username/repository
     if (localDocsDir) {
       dirPath = localDocsDir;
     } else if (githubUrl) {
-      const { owner, repo, branch: urlBranch, path } = parseURL(
-        githubUrl,
-        "https://github.com/",
-      );
+      const {
+        owner,
+        repo,
+        branch: urlBranch,
+        path,
+      } = parseURL(githubUrl, "https://github.com/");
       dirPath = await cloneRepository(
         `https://github.com/${owner}/${repo}.git`,
         branch || urlBranch,
@@ -308,10 +340,12 @@ Usage (remote): docs2llms --github username/repository
         dirPath = join(dirPath, path);
       }
     } else if (gitlabUrl) {
-      const { owner, repo, branch: urlBranch, path } = parseURL(
-        gitlabUrl,
-        "https://gitlab.com/",
-      );
+      const {
+        owner,
+        repo,
+        branch: urlBranch,
+        path,
+      } = parseURL(gitlabUrl, "https://gitlab.com/");
       dirPath = await cloneRepository(
         `https://gitlab.com/${owner}/${repo}.git`,
         branch || urlBranch,
@@ -343,19 +377,33 @@ Usage (remote): docs2llms --github username/repository
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const fullPath = fullPaths[i];
-        const userInput = prompt(`(${i + 1}/${files.length}): ${file}? (y/n)`);
+        const userInput = prompt(
+          `(${i + 1}/${files.length}): ${file}? (y/n)`,
+        );
         if (userInput?.toLowerCase() === "y") {
           confirmFiles.push(file);
           confirmFullPaths.push(fullPath);
         }
       }
 
-      await writeFiles(llmsFile, llmsFullFile, confirmFiles, confirmFullPaths, outputDir);
+      await writeFiles(
+        llmsFile,
+        llmsFullFile,
+        confirmFiles,
+        confirmFullPaths,
+        outputDir,
+      );
 
       console.log(`\n✅ ${llmsFile}`);
       console.log(`\n✅ ${llmsFullFile}`);
     } else {
-      await writeFiles(llmsFile, llmsFullFile, files, fullPaths, outputDir);
+      await writeFiles(
+        llmsFile,
+        llmsFullFile,
+        files,
+        fullPaths,
+        outputDir,
+      );
 
       console.log(`\n✅ ${llmsFile}`);
       console.log(`\n✅ ${llmsFullFile}`);
