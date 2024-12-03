@@ -370,7 +370,13 @@ Usage (remote): docs2llms --github username/repository
 
     if (preview) {
       previewMap(files);
-    } else if (interactive) {
+      const userInput = prompt("Do you want to process the content? (y/n)");
+      if (userInput?.toLowerCase() !== "y") {
+        Deno.exit(0);
+      }
+    }
+
+    if (interactive) {
       const confirmFiles: string[] = [];
       const confirmFullPaths: string[] = [];
 
@@ -394,8 +400,7 @@ Usage (remote): docs2llms --github username/repository
         outputDir,
       );
 
-      console.log(`\n✅ ${llmsFile}`);
-      console.log(`✅ ${llmsFullFile}`);
+      console.log(`\n✅ ${llmsFile}   ✅ ${llmsFullFile}`);
     } else {
       await writeFiles(
         llmsFile,
@@ -410,7 +415,7 @@ Usage (remote): docs2llms --github username/repository
 
     if (summary) {
       console.log("📄 Summary:");
-      console.log("🗂️ :", files);
+      files.forEach(file => console.log(`+ ${file}`));
     }
 
     if (analyze) {
