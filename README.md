@@ -36,7 +36,7 @@ docs2llms --gitlab username/repository
 
 ---
 
-**`--llms`**
+#### **`--llms`**
 
 Name of the output file processing the `llms.txt` content hyperlinks.
 
@@ -48,7 +48,7 @@ docs2llms --github username/repository --llms llms
   
 ---
 
-**`--llms-full`**
+#### **`--llms-full`**
 
 Name of the output file processing the `llms-full.txt` full content.
 
@@ -60,7 +60,7 @@ docs2llms --github username/repository --llms-full llms-full
 
 ---
 
-**`--skip`**
+#### **`--skip`**
 
 Skip specified folders.
 
@@ -72,7 +72,7 @@ docs2llms --github username/repository --skip assets
 
 ---
 
-**`--format`**
+#### **`--format`**
 
   Format of the processed content. Available: `txt`, `md`, `rst`. Defaults to `txt`.
 
@@ -84,7 +84,7 @@ docs2llms --github username/repository --format md
 
 ---
 
-**`--branch`**
+#### **`--branch`**
 
 The repository branch to clone from. Defaults to `main`.
 
@@ -96,7 +96,7 @@ docs2llms --github username/repository --branch main
 
 ---
 
-**`--summary`**
+#### **`--summary`**
 
 Display a summary of the processed content.
 
@@ -104,7 +104,7 @@ Display a summary of the processed content.
 docs2llms --github username/repository --summary
 ```
 
-```
+```txt
 ✅ llms.txt     ✅ llms-full.txt
 📄 Summary:
 🗂️ : [
@@ -117,7 +117,7 @@ docs2llms --github username/repository --summary
 
 ---
 
-**`--preview`**
+#### **`--preview`**
 
   Preview the content in the terminal before processing.
 
@@ -125,7 +125,7 @@ docs2llms --github username/repository --summary
 docs2llms --github username/repository --preview
 ```
 
-```
+```txt
 📂 Preview:
 example/docs/
 - markdown.md
@@ -137,7 +137,7 @@ example/docs/
 
 ---
 
-**`--interactive`**
+#### **`--interactive`**
 
 Manually select and confirm each file to be processed.
 
@@ -149,7 +149,7 @@ docs2llms --github username/repository --interactive
 
 ---
 
-**`--max-size`**
+#### **`--max-size`**
 
 Skip files larger than the specified size (in MB).
 
