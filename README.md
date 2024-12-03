@@ -38,13 +38,13 @@ docs2llms --gitlab username/repository
 
 #### **`--llms`**
 
-Name of the output file processing the content hyperlinks. Defaults to `llms.txt`.
+Name of the output file processing the content hyperlinks. Defaults to `llms-custom.txt`.
 
 ```bash
 docs2llms --github username/repository --llms llms
 ```
   
-`✅ llms.txt`
+`✅ llms-custom.txt    ✅ llms-full.txt`
   
 ---
 
@@ -53,10 +53,10 @@ docs2llms --github username/repository --llms llms
 Name of the output file processing the full content. Defaults to `llms-full.txt`.
 
 ```bash
-docs2llms --github username/repository --llms-full llms-full
+docs2llms --github username/repository --llms-full llms-full-custom
 ```
 
-`✅ llms.txt`
+`✅ llms.txt    ✅ llms-full-custom.txt`
 
 ---
 
