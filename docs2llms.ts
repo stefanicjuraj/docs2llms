@@ -395,7 +395,7 @@ Usage (remote): docs2llms --github username/repository
       );
 
       console.log(`\n✅ ${llmsFile}`);
-      console.log(`\n✅ ${llmsFullFile}`);
+      console.log(`✅ ${llmsFullFile}`);
     } else {
       await writeFiles(
         llmsFile,
@@ -405,8 +405,7 @@ Usage (remote): docs2llms --github username/repository
         outputDir,
       );
 
-      console.log(`\n✅ ${llmsFile}`);
-      console.log(`\n✅ ${llmsFullFile}`);
+      console.log(`\n✅ ${llmsFile}   ✅ ${llmsFullFile}`);
     }
 
     if (summary) {
