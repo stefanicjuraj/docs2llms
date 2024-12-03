@@ -159,39 +159,3 @@ docs2llms --github username/repository --max-size 10
 
 `✅ llms.txt    ✅llms-full.txt`
 
-### Examples
-
-```bash
-# From a local directory
-docs2llms --local path/to/directory
-
-# From a GitHub repository
-docs2llms --github username/repository
-
-# From a GitLab repository
-docs2llms --gitlab username/repository
-
-# Custom output files
-docs2llms --github username/repository --llms llms-file --llms-full llms-full-file
-
-# Custom format
-docs2llms --github username/repository --format txt
-
-# Specify branch
-docs2llms --github username/repository --branch main
-
-# Skip folders
-docs2llms --github username/repository --skip api,examples
-
-# Summarize processed content
-docs2llms --github username/repository --summary
-
-# Preview processed content
-docs2llms --github username/repository --preview
-
-# Interactively select individual files
-docs2llms --github username/repository --interactive
-
-# Skip files larger than 1 MB
-docs2llms --github username/repository --max-size 1
-```
