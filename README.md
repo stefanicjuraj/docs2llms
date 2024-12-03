@@ -10,7 +10,7 @@ The *llms.txt* file contains hyperlinks to the extracted content, while the *llm
 
 ## Installation
 
-```
+```sh
 deno install -n docs2llms https://raw.githubusercontent.com/stefanicjuraj/docs2llms/main/docs2llms.ts --allow-read --allow-net --allow-write --allow-run --global -f
 ```
 
@@ -18,39 +18,146 @@ deno install -n docs2llms https://raw.githubusercontent.com/stefanicjuraj/docs2l
 
 ### Local
 
-```
+```sh
 docs2llms --local /path/to/directory
 ```
 
 ### Remote
 
-```
+```sh
 docs2llms --github username/repository
 ```
 
-```
+```sh
 docs2llms --gitlab username/repository
 ```
 
 ### Options
 
-&rarr; **`--llms`**: Name of the output file processing the `llms.txt` content hyperlinks.
+---
 
-&rarr; **`--llms-full`**: Name of the output file processing the `llms-full.txt` full content.
+**`--llms`**
 
-&rarr; **`--skip`**: Skip specified folders.
+Name of the output file processing the `llms.txt` content hyperlinks.
 
-&rarr; **`--format`**: Format of the processed content. Available: `txt`, `md`, `rst`. Defaults to `txt`.
+```bash
+docs2llms --github username/repository --llms llms
+```
+  
+`✅ llms.txt`
+  
+---
 
-&rarr; **`--branch`**: The repository branch to clone from. Defaults to `main`.
+**`--llms-full`**
 
-&rarr; **`--summary`**: Display a summary of the processed content.
+Name of the output file processing the `llms-full.txt` full content.
 
-&rarr; **`--preview`**: Preview the content in the terminal before processing.
+```bash
+docs2llms --github username/repository --llms-full llms-full
+```
 
-&rarr; **`--interactive`**: Manually select and confirm each file to be processed.
+`✅ llms.txt`
 
-&rarr; **`--max-size`**: Skip files larger than the specified size (in MB).
+---
+
+**`--skip`**
+
+Skip specified folders.
+
+```bash
+docs2llms --github username/repository --skip assets
+```
+
+`✅ llms.txt    ✅llms-full.txt`
+
+---
+
+**`--format`**
+
+  Format of the processed content. Available: `txt`, `md`, `rst`. Defaults to `txt`.
+
+```bash
+docs2llms --github username/repository --format md
+```
+
+`✅ llms.txt    ✅llms-full.txt`
+
+---
+
+**`--branch`**
+
+The repository branch to clone from. Defaults to `main`.
+
+```bash
+docs2llms --github username/repository --branch main
+```
+
+`✅ llms.txt    ✅llms-full.txt`
+
+---
+
+**`--summary`**
+
+Display a summary of the processed content.
+
+```bash
+docs2llms --github username/repository --summary
+```
+
+```
+✅ llms.txt     ✅ llms-full.txt
+📄 Summary:
+🗂️ : [
+"example/docs/markdown.md",
+"example/docs/restructuredtext.rst",
+"example/docs/plain-text.txt",
+"README.md"
+]
+```
+
+---
+
+**`--preview`**
+
+  Preview the content in the terminal before processing.
+
+```bash
+docs2llms --github username/repository --preview
+```
+
+```
+📂 Preview:
+example/docs/
+- markdown.md
+- restructuredtext.rst
+- plain-text.txt
+./
+- README.md
+```
+
+---
+
+**`--interactive`**
+
+Manually select and confirm each file to be processed.
+
+```bash
+docs2llms --github username/repository --interactive
+```
+
+`(1/4): example/docs/markdown.md? (y/n)`
+
+---
+
+**`--max-size`**
+
+Skip files larger than the specified size (in MB).
+
+```bash
+docs2llms --github username/repository --max-size 10
+```
+
+`✅ llms.txt    ✅llms-full.txt`
 
 ### Examples
 
