@@ -96,6 +96,18 @@ docs2llms --github username/repository --branch main
 
 ---
 
+#### **`--output-dir`**
+
+Specify the output directory. Defaults to current directory.
+
+```bash
+docs2llms --github username/repository --output-dir .
+```
+
+`✅ llms.txt    ✅llms-full.txt`
+
+---
+
 #### **`--summary`**
 
 Display a summary of the processed content.
@@ -158,4 +170,3 @@ docs2llms --github username/repository --max-size 10
 ```
 
 `✅ llms.txt    ✅llms-full.txt`
-
