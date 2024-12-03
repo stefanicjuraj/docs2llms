@@ -68,7 +68,7 @@ Format of the processed content. Available: `txt`, `md`, `rst`. Defaults to `txt
 docs2llms --github username/repository --format md
 ```
 
-`✅ llms.md    ✅llms-full.md`
+`✅ llms.md    ✅ llms-full.md`
 
 ---
 
