@@ -38,7 +38,7 @@ docs2llms --gitlab username/repository
 
 #### **`--llms`**
 
-Name of the output file processing the `llms.txt` content hyperlinks.
+Name of the output file processing the content hyperlinks. Defaults to `llms.txt`.
 
 ```bash
 docs2llms --github username/repository --llms llms
@@ -50,7 +50,7 @@ docs2llms --github username/repository --llms llms
 
 #### **`--llms-full`**
 
-Name of the output file processing the `llms-full.txt` full content.
+Name of the output file processing the full content. Defaults to `llms-full.txt`.
 
 ```bash
 docs2llms --github username/repository --llms-full llms-full
@@ -60,21 +60,9 @@ docs2llms --github username/repository --llms-full llms-full
 
 ---
 
-#### **`--skip`**
-
-Skip specified folders.
-
-```bash
-docs2llms --github username/repository --skip assets
-```
-
-`✅ llms.txt    ✅llms-full.txt`
-
----
-
 #### **`--format`**
 
-  Format of the processed content. Available: `txt`, `md`, `rst`. Defaults to `txt`.
+Format of the processed content. Available: `txt`, `md`, `rst`. Defaults to `txt`.
 
 ```bash
 docs2llms --github username/repository --format md
@@ -98,10 +86,34 @@ docs2llms --github username/repository --branch main
 
 #### **`--output-dir`**
 
-Specify the output directory. Defaults to current directory.
+The output directory of the processed content. Defaults to the current directory.
 
 ```bash
 docs2llms --github username/repository --output-dir .
+```
+
+`✅ llms.txt    ✅llms-full.txt`
+
+---
+
+#### **`--skip`**
+
+Skip specified folders.
+
+```bash
+docs2llms --github username/repository --skip assets
+```
+
+`✅ llms.txt    ✅llms-full.txt`
+
+---
+
+#### **`--max-size`**
+
+Skip files larger than the specified size (in MB).
+
+```bash
+docs2llms --github username/repository --max-size 10
 ```
 
 `✅ llms.txt    ✅llms-full.txt`
@@ -131,7 +143,7 @@ docs2llms --github username/repository --summary
 
 #### **`--analyze`**
 
-Provide an analysis report of the content (file and word counts, average file size).
+Analysis report of the content (file and word counts, average file size).
 
 ```bash
 docs2llms --github username/repository --analyze
@@ -148,7 +160,7 @@ Average file size: 3.20 MB
 
 #### **`--preview`**
 
-  Preview the content in the terminal before processing.
+Preview the content in the terminal before processing.
 
 ```bash
 docs2llms --github username/repository --preview
@@ -175,15 +187,3 @@ docs2llms --github username/repository --interactive
 ```
 
 `(1/4): example/docs/markdown.md? (y/n)`
-
----
-
-#### **`--max-size`**
-
-Skip files larger than the specified size (in MB).
-
-```bash
-docs2llms --github username/repository --max-size 10
-```
-
-`✅ llms.txt    ✅llms-full.txt`
