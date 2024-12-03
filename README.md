@@ -80,7 +80,7 @@ The repository branch to clone from. Defaults to `main`.
 docs2llms --github username/repository --branch main
 ```
 
-`✅ llms.txt    ✅llms-full.txt`
+`✅ llms.txt    ✅ llms-full.txt`
 
 ---
 
@@ -92,7 +92,7 @@ The output directory of the processed content. Defaults to the current directory
 docs2llms --github username/repository --output-dir .
 ```
 
-`✅ llms.txt    ✅llms-full.txt`
+`✅ llms.txt    ✅ llms-full.txt`
 
 ---
 
@@ -104,7 +104,7 @@ Skip specified folders.
 docs2llms --github username/repository --skip assets
 ```
 
-`✅ llms.txt    ✅llms-full.txt`
+`✅ llms.txt    ✅ llms-full.txt`
 
 ---
 
@@ -116,7 +116,7 @@ Skip files larger than the specified size (in MB).
 docs2llms --github username/repository --max-size 10
 ```
 
-`✅ llms.txt    ✅llms-full.txt`
+`✅ llms.txt    ✅ llms-full.txt`
 
 ---
 
