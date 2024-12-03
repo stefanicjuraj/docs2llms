@@ -131,12 +131,10 @@ docs2llms --github username/repository --summary
 ```txt
 ✅ llms.txt     ✅ llms-full.txt
 📄 Summary:
-🗂️ : [
-"example/docs/markdown.md",
-"example/docs/restructuredtext.rst",
-"example/docs/plain-text.txt",
-"README.md"
-]
++ example/docs/markdown.md
++ example/docs/restructuredtext.rst
++ example/docs/plain-text.txt
++ README.md
 ```
 
 ---
@@ -174,6 +172,7 @@ example/docs/
 - plain-text.txt
 ./
 - README.md
+Do you want to process the content? (y/n)
 ```
 
 ---
