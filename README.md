@@ -50,6 +50,8 @@ docs2llms --gitlab username/repository
 
 &rarr; **`--interactive`**: Interactively select individual files to be processed.
 
+&rarr; **`--max-size`**: Skip files larger than the specified size (in MB).
+
 ### Examples
 
 ```bash
@@ -82,4 +84,7 @@ docs2llms --github username/repository --preview
 
 # Interactively select individual files
 docs2llms --github username/repository --interactive
+
+# Skip files larger than 1 MB
+docs2llms --github username/repository --max-size 1
 ```
