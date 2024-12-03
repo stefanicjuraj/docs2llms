@@ -41,10 +41,10 @@ docs2llms --gitlab username/repository
 Name of the output file processing the content hyperlinks. Defaults to `llms-custom.txt`.
 
 ```bash
-docs2llms --github username/repository --llms llms-custom
+docs2llms --github username/repository --llms llms
 ```
   
-`✅ llms-custom.txt    ✅ llms-full.txt`
+`✅ llms.txt    ✅ llms-full.txt`
   
 ---
 
@@ -53,10 +53,10 @@ docs2llms --github username/repository --llms llms-custom
 Name of the output file processing the full content. Defaults to `llms-full.txt`.
 
 ```bash
-docs2llms --github username/repository --llms-full llms-full-custom
+docs2llms --github username/repository --llms-full llms-full
 ```
 
-`✅ llms.txt    ✅ llms-full-custom.txt`
+`✅ llms.txt    ✅ llms-full.txt`
 
 ---
 
