@@ -164,6 +164,29 @@ async function writeFiles(
     }
 }
 
+function previewMap(files: string[]) {
+    const map: { [key: string]: string[] } = {};
+
+    files.forEach((file) => {
+        const parts = file.split("/");
+        const dir = parts.slice(0, -1).join("/") || ".";
+        const fileName = parts[parts.length - 1];
+
+        if (!map[dir]) {
+            map[dir] = [];
+        }
+        map[dir].push(fileName);
+    });
+
+    console.log("📂 Preview Map:");
+    for (const dir in map) {
+        console.log(`\n${dir}/`);
+        map[dir].forEach((file) => {
+            console.log(`  - ${file}`);
+        });
+    }
+}
+
 async function main() {
     const args = Deno.args;
 
@@ -290,8 +313,7 @@ Usage (remote): docs2llms --github username/repository
         );
 
         if (preview) {
-            console.log("🕵️ Preview of directories and files to be processed.");
-            console.log("🗂️ :", files);
+            previewMap(files);
         } else if (interactive) {
             const confirmFiles: string[] = [];
             const confirmFullPaths: string[] = [];
