@@ -158,6 +158,28 @@ function previewMap(files: string[]) {
   }
 }
 
+async function analyzeFiles(files: string[], fullPaths: string[]) {
+  let totalWords = 0;
+  let totalSize = 0;
+
+  for (const fullPath of fullPaths) {
+    const fileContent = await Deno.readTextFile(fullPath);
+    const wordCount = fileContent.split(/\s+/).length;
+    const fileInfo = await Deno.stat(fullPath);
+
+    totalWords += wordCount;
+    totalSize += fileInfo.size;
+  }
+
+  const averageSize = totalSize / files.length / (1024 * 1024);
+
+  console.log(`\n📊 Analysis Report:`);
+  console.log(`Total files: ${files.length}`);
+  console.log(`Total words: ${totalWords}`);
+  console.log(`Average file size: ${averageSize.toFixed(2)} MB`);
+  console.log(`\nUse the --preview option to view content in the terminal before processing.`);
+}
+
 async function main() {
   const args = Deno.args;
 
@@ -172,6 +194,7 @@ async function main() {
   let preview = false;
   let interactive = false;
   let summary = false;
+  let analyze = false;
   let maxSize = Infinity;
   let outputDir = ".";
 
@@ -204,6 +227,9 @@ async function main() {
         break;
       case "--summary":
         summary = true;
+        break;
+      case "--analyze":
+        analyze = true;
         break;
       case "--max-size":
         maxSize = parseFloat(args[++i]);
@@ -251,6 +277,7 @@ Usage (remote): docs2llms --github username/repository
 --preview: Preview the content in the terminal. Does not process content.
 --interactive: Interactively select individual files to be processed.
 --summary: Display a summary of the processed content.
+--analyze: Provide an analysis report of the content (file and word counts, average file size).
 --max-size: Skip files larger than the specified size (in MB).
 --branch: The repository branch to clone from. Defaults to main.
 --output-dir: Specify the output directory. Defaults to current directory.
@@ -258,7 +285,7 @@ Usage (remote): docs2llms --github username/repository
     Deno.exit(1);
   }
 
-  if ((preview || interactive) && (summary || maxSize !== Infinity || skipFolders.length > 0 || llmsBaseName !== "llms" || llmsFullBaseName !== "llms-full" || format !== "txt" || branch !== "main" || outputDir !== ".")) {
+  if ((preview || interactive) && (summary || analyze || maxSize !== Infinity || skipFolders.length > 0 || llmsBaseName !== "llms" || llmsFullBaseName !== "llms-full" || format !== "txt" || branch !== "main" || outputDir !== ".")) {
     console.log('⚠️ The --preview and --interactive options cannot be combined with other options.');
     Deno.exit(1);
   }
@@ -337,6 +364,10 @@ Usage (remote): docs2llms --github username/repository
     if (summary) {
       console.log("📄 Summary:");
       console.log("🗂️ :", files);
+    }
+
+    if (analyze) {
+      await analyzeFiles(files, fullPaths);
     }
 
     if ((githubUrl || gitlabUrl) && !preview && !interactive) {
