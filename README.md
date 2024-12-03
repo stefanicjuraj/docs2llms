@@ -34,21 +34,21 @@ docs2llms --gitlab username/repository
 
 ### Options
 
-&rarr; **`--llms`**: Output file for extracted content hyperlinks. Defaults to `llms.txt`.
+&rarr; **`--llms`**: Name of the output file processing the `llms.txt` content hyperlinks.
 
-&rarr; **`--llms-full`**: Output file for processed content. Defaults to `llms-full.txt`.
+&rarr; **`--llms-full`**: Name of the output file processing the `llms-full.txt` full content.
 
-&rarr; **`--skip`**: Folders to skip during processing.
+&rarr; **`--skip`**: Skip specified folders.
 
-&rarr; **`--format`**: Format for the processed content. Available: `txt`, `md`, `rst`. Defaults to `txt`.
+&rarr; **`--format`**: Format of the processed content. Available: `txt`, `md`, `rst`. Defaults to `txt`.
 
 &rarr; **`--branch`**: The repository branch to clone from. Defaults to `main`.
 
 &rarr; **`--summary`**: Display a summary of the processed content.
 
-&rarr; **`--preview`**: Preview the content in the terminal. Does not process content.
+&rarr; **`--preview`**: Preview the content in the terminal before processing.
 
-&rarr; **`--interactive`**: Interactively select individual files to be processed.
+&rarr; **`--interactive`**: Manually select and confirm each file to be processed.
 
 &rarr; **`--max-size`**: Skip files larger than the specified size (in MB).
 
