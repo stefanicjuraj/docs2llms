@@ -249,6 +249,11 @@ Usage (remote): docs2llms --github username/repository
     Deno.exit(1);
   }
 
+  if ((preview || interactive) && (summary || maxSize !== Infinity || skipFolders.length > 0 || llmsBaseName !== "llms" || llmsFullBaseName !== "llms-full" || format !== "txt" || branch !== "main")) {
+    console.log('⚠️ The --preview and --interactive options cannot be combined with other options.');
+    Deno.exit(1);
+  }
+
   try {
     let dirPath: string;
     if (localDocsDir) {
