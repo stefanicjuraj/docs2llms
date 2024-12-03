@@ -80,7 +80,7 @@ docs2llms --github username/repository --skip assets
 docs2llms --github username/repository --format md
 ```
 
-`✅ llms.txt    ✅llms-full.txt`
+`✅ llms.md    ✅llms-full.md`
 
 ---
 
