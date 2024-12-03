@@ -98,13 +98,17 @@ async function writeFiles(
   llmsFullFile: string,
   files: string[],
   fullPaths: string[],
+  outputDir: string,
 ) {
-  const llmsWriter = await Deno.open(llmsFile, {
+  const llmsFilePath = join(outputDir, llmsFile);
+  const llmsFullFilePath = join(outputDir, llmsFullFile);
+
+  const llmsWriter = await Deno.open(llmsFilePath, {
     create: true,
     truncate: true,
     write: true,
   });
-  const llmsFullWriter = await Deno.open(llmsFullFile, {
+  const llmsFullWriter = await Deno.open(llmsFullFilePath, {
     create: true,
     truncate: true,
     write: true,
@@ -169,6 +173,7 @@ async function main() {
   let interactive = false;
   let summary = false;
   let maxSize = Infinity;
+  let outputDir = ".";
 
   for (let i = 0; i < args.length; i++) {
     switch (args[i]) {
@@ -224,6 +229,9 @@ async function main() {
       case "--branch":
         branch = args[++i];
         break;
+      case "--output-dir":
+        outputDir = args[++i];
+        break;
     }
   }
 
@@ -245,11 +253,12 @@ Usage (remote): docs2llms --github username/repository
 --summary: Display a summary of the processed content.
 --max-size: Skip files larger than the specified size (in MB).
 --branch: The repository branch to clone from. Defaults to main.
+--output-dir: Specify the output directory. Defaults to current directory.
             `);
     Deno.exit(1);
   }
 
-  if ((preview || interactive) && (summary || maxSize !== Infinity || skipFolders.length > 0 || llmsBaseName !== "llms" || llmsFullBaseName !== "llms-full" || format !== "txt" || branch !== "main")) {
+  if ((preview || interactive) && (summary || maxSize !== Infinity || skipFolders.length > 0 || llmsBaseName !== "llms" || llmsFullBaseName !== "llms-full" || format !== "txt" || branch !== "main" || outputDir !== ".")) {
     console.log('⚠️ The --preview and --interactive options cannot be combined with other options.');
     Deno.exit(1);
   }
@@ -314,12 +323,12 @@ Usage (remote): docs2llms --github username/repository
         }
       }
 
-      await writeFiles(llmsFile, llmsFullFile, confirmFiles, confirmFullPaths);
+      await writeFiles(llmsFile, llmsFullFile, confirmFiles, confirmFullPaths, outputDir);
 
       console.log(`\n✅ ${llmsFile}`);
       console.log(`\n✅ ${llmsFullFile}`);
     } else {
-      await writeFiles(llmsFile, llmsFullFile, files, fullPaths);
+      await writeFiles(llmsFile, llmsFullFile, files, fullPaths, outputDir);
 
       console.log(`\n✅ ${llmsFile}`);
       console.log(`\n✅ ${llmsFullFile}`);
