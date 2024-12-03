@@ -129,6 +129,23 @@ docs2llms --github username/repository --summary
 
 ---
 
+#### **`--analyze`**
+
+Provide an analysis report of the content (file and word counts, average file size).
+
+```bash
+docs2llms --github username/repository --analyze
+```
+
+```txt
+📊 Analysis Report:
+Total files: 30
+Total words: 50300
+Average file size: 3.20 MB
+```
+
+---
+
 #### **`--preview`**
 
   Preview the content in the terminal before processing.
