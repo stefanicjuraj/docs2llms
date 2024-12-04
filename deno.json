@@ -1,7 +1,19 @@
 {
-    "tasks": {
-        "docs2llms": "docs2llms",
-        "example_local": "docs2llms --local example/docs",
-        "example_remote": "docs2llms https://github.com/stefanicjuraj/docs2llms"
-    }
+  "tasks": {
+    "docs2llms": "docs2llms",
+    "example_local": "docs2llms --local example/docs",
+    "example_remote": "docs2llms --github https://github.com/stefanicjuraj/docs2llms",
+    "example_llms": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --llms llms.txt",
+    "example_llms_full": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --llms llms-full.txt",
+    "example_format": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --format md",
+    "example_branch": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --branch main",
+    "example_output_dir": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --output-dir example",
+    "example_skip": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --skip example",
+    "example_exclude": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --exclude example",
+    "example_max_size": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --max-size 10",
+    "example_summary": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --summary",
+    "example_analyze": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --analyze",
+    "example_preview:": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --preview",
+    "example_interactive": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --interactive"
+  }
 }
