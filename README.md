@@ -25,7 +25,7 @@ Configure file naming, content format, branch selection, output directory, exclu
 ## Installation
 
 ```sh
-deno install -n docs2llms https://raw.githubusercontent.com/stefanicjuraj/docs2llms/main/docs2llms.ts --allow-read --allow-net --allow-write --allow-run --global -f
+deno install -n docs2llms https://raw.githubusercontent.com/stefanicjuraj/docs2llms/main/index.ts --allow-read --allow-net --allow-write --allow-run --global -f
 ```
 
 ## Usage
