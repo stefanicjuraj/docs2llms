@@ -147,6 +147,11 @@ async function writeFiles(
     llmsWriter.close();
     llmsFullWriter.close();
   }
+
+  console.log(`\n✅ ${llmsFile}`);
+  console.log(`📂 ${llmsFilePath}`);
+  console.log(`✅ ${llmsFullFile}`);
+  console.log(`📂 ${llmsFullFilePath}`);
 }
 
 function previewMap(files: string[]) {
@@ -172,30 +177,6 @@ function previewMap(files: string[]) {
   }
 }
 
-async function analyzeFiles(files: string[], fullPaths: string[]) {
-  let totalWords = 0;
-  let totalSize = 0;
-
-  for (const fullPath of fullPaths) {
-    const fileContent = await Deno.readTextFile(fullPath);
-    const wordCount = fileContent.split(/\s+/).length;
-    const fileInfo = await Deno.stat(fullPath);
-
-    totalWords += wordCount;
-    totalSize += fileInfo.size;
-  }
-
-  const averageSize = totalSize / files.length / (1024 * 1024);
-
-  console.log(`\n📊 Analysis Report:`);
-  console.log(`Total files: ${files.length}`);
-  console.log(`Total words: ${totalWords}`);
-  console.log(`Average file size: ${averageSize.toFixed(2)} MB`);
-  console.log(
-    `\nUse the --preview option to view content in the terminal before processing.`,
-  );
-}
-
 async function main() {
   const args = Deno.args;
 
@@ -211,7 +192,6 @@ async function main() {
   let preview = false;
   let interactive = false;
   let summary = false;
-  let analyze = false;
   let maxSize = Infinity;
   let outputDir = ".";
 
@@ -257,9 +237,6 @@ async function main() {
         break;
       case "--summary":
         summary = true;
-        break;
-      case "--analyze":
-        analyze = true;
         break;
       case "--max-size":
         maxSize = parseFloat(args[++i]);
@@ -314,7 +291,6 @@ Usage (remote): docs2llms --github username/repository
 --skip: Folders to skip during processing.
 --exclude: Exclude files based on specified extensions (md, mdx, rst, txt).
 --summary: Display a summary of the processed content.
---analyze: Analysis report of the content (file and word counts, average file size).
 --preview: Preview the content in the terminal before processing.
 --interactive: Manually select and confirm each file to be processed.
             `);
@@ -324,7 +300,6 @@ Usage (remote): docs2llms --github username/repository
   if (
     (preview || interactive) &&
     (summary ||
-      analyze ||
       maxSize !== Infinity ||
       skipFolders.length > 0 ||
       llmsBaseName !== "llms" ||
@@ -419,8 +394,6 @@ Usage (remote): docs2llms --github username/repository
         confirmFullPaths,
         outputDir,
       );
-
-      console.log(`\n✅ ${llmsFile}   ✅ ${llmsFullFile}`);
     } else {
       await writeFiles(
         llmsFile,
@@ -429,17 +402,11 @@ Usage (remote): docs2llms --github username/repository
         fullPaths,
         outputDir,
       );
-
-      console.log(`\n✅ ${llmsFile}   ✅ ${llmsFullFile}`);
     }
 
     if (summary) {
       console.log("📄 Summary:");
       files.forEach((file) => console.log(`+ ${file}`));
-    }
-
-    if (analyze) {
-      await analyzeFiles(files, fullPaths);
     }
 
     if ((githubUrl || gitlabUrl) && !preview && !interactive) {
