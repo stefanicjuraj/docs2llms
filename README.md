@@ -1,12 +1,12 @@
 # docs2llms
 
-**Transform software documentation content into formats optimized for use by AI and LLMs.** 
+**Transform software documentation content into formats optimized for use by AI and LLMs.**
 
-docs2llms is a command-line tool built with Deno and TypeScript. 
+docs2llms is a command-line tool built with Deno and TypeScript.
 
-The tool utilizes [llms.txt standard](https://llmstxt.org/) to provide consistent formatting for AI and LLMs by extracting content from local directories or remote repositories and processing them into *llms.txt* and *llms-full.txt* files.
+Using the [llms.txt standard](https://llmstxt.org/), this tool ensures consistent text formatting for AI and LLMs by extracting content from local directories or remote repositories and converting it into *llms.txt* and *llms-full.txt* files.
 
-The *llms.txt* file contains hyperlinks to the extracted content, while the *llms-full.txt* file contains the processed content.
+The *llms.txt* file includes hyperlinks to the extracted content, whereas the *llms-full.txt* file contains the fully processed content.
 
 ## Installation
 
@@ -38,7 +38,7 @@ docs2llms --gitlab username/repository
 
 #### **`--llms`**
 
-Name of the output file processing the content hyperlinks. Defaults to `llms-custom.txt`.
+Specify the name of the output file containing content hyperlinks. Defaults to `llms.txt`.
 
 ```bash
 docs2llms --github username/repository --llms llms
@@ -50,7 +50,7 @@ docs2llms --github username/repository --llms llms
 
 #### **`--llms-full`**
 
-Name of the output file processing the full content. Defaults to `llms-full.txt`.
+Specify the name of the output file containing the full content. Defaults to `llms-full.txt`.
 
 ```bash
 docs2llms --github username/repository --llms-full llms-full
@@ -62,7 +62,7 @@ docs2llms --github username/repository --llms-full llms-full
 
 #### **`--format`**
 
-Format of the processed content. Available: `txt`, `md`, `rst`. Defaults to `txt`.
+Specify the format of the processed content. Options: `txt`, `md`, `rst`. Defaults to `txt`.
 
 ```bash
 docs2llms --github username/repository --format md
@@ -74,7 +74,7 @@ docs2llms --github username/repository --format md
 
 #### **`--branch`**
 
-The repository branch to clone from. Defaults to `main`.
+Specify the repository branch to clone from. Defaults to `main`.
 
 ```bash
 docs2llms --github username/repository --branch main
@@ -86,7 +86,7 @@ docs2llms --github username/repository --branch main
 
 #### **`--output-dir`**
 
-The output directory of the processed content. Defaults to the current directory.
+Specify the output directory for the processed content. Defaults to the current directory.
 
 ```bash
 docs2llms --github username/repository --output-dir .
@@ -98,7 +98,7 @@ docs2llms --github username/repository --output-dir .
 
 #### **`--skip`**
 
-Skip specified folders.
+Specify folders to skip during processing.
 
 ```bash
 docs2llms --github username/repository --skip assets
@@ -110,7 +110,7 @@ docs2llms --github username/repository --skip assets
 
 #### **`--exclude`**
 
-Exclude files based on specified extensions (`md`, `mdx`, `rst`, `txt`).
+Specify file extensions to exclude from processing. Options: `md`, `mdx`, `rst`, `txt`.
 
 ```bash
 docs2llms --github username/repository --exclude rst
@@ -122,7 +122,7 @@ docs2llms --github username/repository --exclude rst
 
 #### **`--max-size`**
 
-Skip files larger than the specified size (in MB).
+Specify the maximum file size (in MB) to include.
 
 ```bash
 docs2llms --github username/repository --max-size 10
@@ -134,7 +134,7 @@ docs2llms --github username/repository --max-size 10
 
 #### **`--summary`**
 
-Display a summary of the processed content.
+Display a summary of the processed content after extraction.
 
 ```bash
 docs2llms --github username/repository --summary
@@ -153,7 +153,7 @@ docs2llms --github username/repository --summary
 
 #### **`--analyze`**
 
-Analysis report of the content (file and word counts, average file size).
+Generate an analysis report of the content, including file count, word count, and average file size.
 
 ```bash
 docs2llms --github username/repository --analyze
@@ -170,7 +170,7 @@ Average file size: 3.20 MB
 
 #### **`--preview`**
 
-Preview the content in the terminal before processing.
+Preview the content in the terminal prior to processing.
 
 ```bash
 docs2llms --github username/repository --preview
@@ -191,10 +191,16 @@ Do you want to process the content? (y/n)
 
 #### **`--interactive`**
 
-Manually select and confirm each file to be processed.
+Manually select and confirm each file for processing.
 
 ```bash
 docs2llms --github username/repository --interactive
 ```
 
-`(1/4): example/docs/markdown.md? (y/n)`
+```txt
+(1/4): example/docs/markdown.md? (y/n)
+(2/4): example/docs/restructuredtext.rst? (y/n)
+(3/4): example/docs/plain-text.txt? (y/n)
+(4/4): README.md? (y/n)
+✅ llms.txt     ✅ llms-full.txt
+```
