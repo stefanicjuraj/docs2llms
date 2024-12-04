@@ -69,6 +69,7 @@ async function getDirectory(
   dirPath: string,
   basePath: string,
   skipFolders: string[] = [],
+  excludeExtensions: string[] = [],
   maxSize: number = Infinity,
 ): Promise<{ files: string[]; fullPaths: string[] }> {
   const files: string[] = [];
@@ -84,7 +85,10 @@ async function getDirectory(
 
       if (
         entry.isFile &&
-        [".md", ".mdx", ".txt", ".rst"].some((ext) => entry.name.endsWith(ext))
+        [".md", ".mdx", ".txt", ".rst"].some((ext) =>
+          entry.name.endsWith(ext)
+        ) &&
+        !excludeExtensions.some((ext) => entry.name.endsWith(ext))
       ) {
         const fileInfo = await Deno.stat(fullEntryPath);
         if (fileInfo.size <= maxSize * 1024 * 1024) {
@@ -200,6 +204,7 @@ async function main() {
   let llmsFullBaseName = "llms-full";
   let format = "txt";
   const skipFolders: string[] = [];
+  const excludeExtensions: string[] = [];
   let githubUrl = "";
   let gitlabUrl = "";
   let branch = "main";
@@ -228,6 +233,19 @@ async function main() {
         i++;
         while (i < args.length && !args[i].startsWith("--")) {
           skipFolders.push(args[i++]);
+        }
+        i--;
+        break;
+      case "--exclude":
+        i++;
+        while (i < args.length && !args[i].startsWith("--")) {
+          excludeExtensions.push(args[i++]);
+        }
+        if (excludeExtensions.length === 0) {
+          console.error(
+            "⚠️ The --exclude option requires a value (txt, md, mdx, rst) to be specified.",
+          );
+          Deno.exit(1);
         }
         i--;
         break;
@@ -294,6 +312,7 @@ Usage (remote): docs2llms --github username/repository
 --branch: The repository branch to clone from. Defaults to main.
 --output-dir: The output directory of the processed content. Defaults to the current directory.
 --skip: Folders to skip during processing.
+--exclude: Exclude files based on specified extensions (md, mdx, rst, txt).
 --summary: Display a summary of the processed content.
 --analyze: Analysis report of the content (file and word counts, average file size).
 --preview: Preview the content in the terminal before processing.
@@ -365,6 +384,7 @@ Usage (remote): docs2llms --github username/repository
       dirPath,
       dirPath,
       skipFolders,
+      excludeExtensions,
       maxSize,
     );
 
@@ -415,7 +435,7 @@ Usage (remote): docs2llms --github username/repository
 
     if (summary) {
       console.log("📄 Summary:");
-      files.forEach(file => console.log(`+ ${file}`));
+      files.forEach((file) => console.log(`+ ${file}`));
     }
 
     if (analyze) {
