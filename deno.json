@@ -9,7 +9,7 @@
     "example_branch": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --branch main",
     "example_output_dir": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --output-dir example",
     "example_skip": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --skip example",
-    "example_exclude": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --exclude example",
+    "example_exclude": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --exclude rst",
     "example_max_size": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --max-size 10",
     "example_summary": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --summary",
     "example_analyze": "docs2llms --github https://github.com/stefanicjuraj/docs2llms --analyze",
