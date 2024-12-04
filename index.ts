@@ -180,6 +180,7 @@ function previewMap(files: string[]) {
 async function analyzeFiles(files: string[], fullPaths: string[]) {
   let totalWords = 0;
   let totalSize = 0;
+  const folderSet = new Set<string>();
 
   for (const fullPath of fullPaths) {
     const fileContent = await Deno.readTextFile(fullPath);
@@ -188,16 +189,20 @@ async function analyzeFiles(files: string[], fullPaths: string[]) {
 
     totalWords += wordCount;
     totalSize += fileInfo.size;
+
+    const folderPath = fullPath.substring(0, fullPath.lastIndexOf("/"));
+    folderSet.add(folderPath);
   }
 
-  const averageSize = totalSize / files.length / (1024 * 1024);
+  const averageSize = totalSize / files.length / 1024;
 
   console.log(`\n📊 Analysis Report:`);
+  console.log(`Total folders: ${folderSet.size}`);
   console.log(`Total files: ${files.length}`);
   console.log(`Total words: ${totalWords}`);
-  console.log(`Average file size: ${averageSize.toFixed(2)} MB`);
+  console.log(`Average file size: ${averageSize.toFixed(2)} KB`);
   console.log(
-    `\nUse the --preview option to view content in the terminal before processing.`,
+    `\n💡 Use the --preview option to view content in the terminal before processing.`,
   );
 }
 
@@ -393,6 +398,11 @@ Usage (remote): docs2llms --github username/repository
       maxSize,
     );
 
+    if (analyze) {
+      await analyzeFiles(files, fullPaths);
+      Deno.exit(0);
+    }
+
     if (preview) {
       previewMap(files);
       const userInput = prompt("Do you want to process the content? (y/n)");
@@ -439,10 +449,6 @@ Usage (remote): docs2llms --github username/repository
     if (summary) {
       console.log("📄 Summary:");
       files.forEach((file) => console.log(`+ ${file}`));
-    }
-
-    if (analyze) {
-      await analyzeFiles(files, fullPaths);
     }
 
     if ((githubUrl || gitlabUrl) && !preview && !interactive) {
