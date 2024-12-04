@@ -108,6 +108,18 @@ docs2llms --github username/repository --skip assets
 
 ---
 
+#### **`--exclude`**
+
+Exclude files based on specified extensions (`md`, `mdx`, `rst`, `txt`).
+
+```bash
+docs2llms --github username/repository --exclude rst
+```
+
+`✅ llms.txt    ✅ llms-full.txt`
+
+---
+
 #### **`--max-size`**
 
 Skip files larger than the specified size (in MB).
