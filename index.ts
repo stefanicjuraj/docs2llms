@@ -36,7 +36,7 @@ async function cloneRepository(url: string, branch: string): Promise<string> {
 
   const { success, stderr } = await command.output();
   if (!success) {
-    throw new Error(`Git clone failed: ${new TextDecoder().decode(stderr)}`);
+    throw new Error(`🚫 Error cloning a Git repository: ${new TextDecoder().decode(stderr)}`);
   }
 
   return temporaryDirectory;
@@ -97,7 +97,7 @@ async function writeFiles(
   );
   await Deno.writeTextFile(llmsFullFilePath, fileContents.join("\n\n"));
 
-  console.log(`\n✅ ${llmsFilePath}\n✅ ${llmsFullFilePath}`);
+  console.log(`\n✅ ${llmsFilePath}   ✅ ${llmsFullFilePath}`);
 }
 
 function previewOption(files: string[]) {
@@ -244,7 +244,7 @@ async function main() {
 
   if (!config.localDir && !config.githubUrl && !config.gitlabUrl) {
     console.error(
-      "⚠️ Provide a valid local directory, GitHub URL, or GitLab URL.",
+      "⚠️ Provide a valid local directory, GitHub or GitLab URL.",
     );
     helpOption();
     Deno.exit(1);
@@ -285,7 +285,7 @@ async function main() {
 
     if (config.preview) {
       previewOption(files);
-      const userInput = prompt("Do you want to process the content? (y/n)");
+      const userInput = prompt("➜ Continue with processing the content? (y/n)");
       if (userInput?.toLowerCase() !== "y") {
         Deno.exit(0);
       }
