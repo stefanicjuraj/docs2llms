@@ -154,7 +154,7 @@ async function writeFiles(
   console.log(`📂 ${llmsFullFilePath}`);
 }
 
-function previewMap(files: string[]) {
+function previewOption(files: string[]) {
   const map: { [key: string]: string[] } = {};
 
   files.forEach((file) => {
@@ -168,7 +168,7 @@ function previewMap(files: string[]) {
     map[dir].push(fileName);
   });
 
-  console.log("📂 Preview Map:");
+  console.log("📂 Preview:");
   for (const dir in map) {
     console.log(`\n${dir}/`);
     map[dir].forEach((file) => {
@@ -177,7 +177,7 @@ function previewMap(files: string[]) {
   }
 }
 
-async function analyzeFiles(files: string[], fullPaths: string[]) {
+async function analyzeOption(files: string[], fullPaths: string[]) {
   let totalWords = 0;
   let totalSize = 0;
   const folderSet = new Set<string>();
@@ -226,7 +226,6 @@ Usage (remote): ➜ docs2llms --github username/repository
 `);
 }
 
-// Main Function
 async function main() {
   const args = Deno.args;
 
@@ -409,12 +408,12 @@ async function main() {
     );
 
     if (analyze) {
-      await analyzeFiles(files, fullPaths);
+      await analyzeOption(files, fullPaths);
       Deno.exit(0);
     }
 
     if (preview) {
-      previewMap(files);
+      previewOption(files);
       const userInput = prompt("Do you want to process the content? (y/n)");
       if (userInput?.toLowerCase() !== "y") {
         Deno.exit(0);
