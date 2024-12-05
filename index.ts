@@ -71,6 +71,7 @@ async function getDirectory(
   skipFolders: string[] = [],
   excludeExtensions: string[] = [],
   maxSize: number = Infinity,
+  verbose: boolean = false,
 ): Promise<{ files: string[]; fullPaths: string[] }> {
   const files: string[] = [];
   const fullPaths: string[] = [];
@@ -103,6 +104,13 @@ async function getDirectory(
   }
 
   await processDirectory(dirPath);
+
+  if (verbose) {
+    files.forEach((file, index) => {
+      console.log(`(${index + 1}/${files.length}) ➜ ${file}`);
+    });
+    console.log(`\nProcessed ➜ ${files.length} files`);
+  }
 
   return { files, fullPaths };
 }
@@ -198,6 +206,7 @@ Usage (remote): ➜ docs2llms --github username/repository
 ➜ --output-dir: The output directory of the processed content. Defaults to the current directory.
 ➜ --skip: Folders to skip during processing.
 ➜ --exclude: Exclude files based on specified extensions (md, mdx, rst, txt).
+➜ --verbose: Log the processed files in the terminal.
 ➜ --summary: Display a summary of the processed content.
 ➜ --analyze: Analysis report of the content (file and word counts, average file size).
 ➜ --preview: Preview the content in the terminal before processing.
@@ -223,6 +232,7 @@ async function main() {
   let analyze = false;
   let maxSize = Infinity;
   let outputDir = ".";
+  let verbose = false;
 
   if (args.includes("--help")) {
     helpOption();
@@ -308,6 +318,9 @@ async function main() {
       case "--output-dir":
         outputDir = args[++i];
         break;
+      case "--verbose":
+        verbose = true;
+        break;
     }
   }
 
@@ -384,6 +397,7 @@ async function main() {
       skipFolders,
       excludeExtensions,
       maxSize,
+      verbose,
     );
 
     if (analyze) {
