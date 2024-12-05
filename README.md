@@ -48,7 +48,23 @@ docs2llms --gitlab username/repository
 
 ### Options
 
----
+```txt
+Usage (local):  ➜ docs2llms --local /path/to/directory
+Usage (remote): ➜ docs2llms --github username/repository
+                ➜ docs2llms --gitlab username/repository
+
+➜ --llms: Output file for extracted content hyperlinks. Defaults to llms.txt.
+➜ --llms-full: Output file for processed content. Defaults to llms-full.txt.
+➜ --format: Format of the processed content. Available: txt, md, rst. Defaults to txt.
+➜ --branch: The repository branch to clone from. Defaults to main.
+➜ --output-dir: The output directory of the processed content. Defaults to the current directory.
+➜ --skip: Folders to skip during processing.
+➜ --exclude: Exclude files based on specified extensions (md, mdx, rst, txt).
+➜ --summary: Display a summary of the processed content.
+➜ --analyze: Analysis report of the content (file and word counts, average file size).
+➜ --preview: Preview the content in the terminal before processing.
+➜ --interactive: Manually select and confirm each file to be processed.
+```
 
 #### **`--llms`**
 
