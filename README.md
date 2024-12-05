@@ -60,6 +60,7 @@ Usage (remote): ➜ docs2llms --github username/repository
 ➜ --output-dir:  The output directory of the processed content.
 ➜ --skip:        Folders to skip during processing.
 ➜ --exclude:     Exclude files based on specified extensions (md, mdx, rst, txt).
+➜ --verbose:     Log the processed files in the terminal. 
 ➜ --summary:     Display a summary of the processed content.
 ➜ --analyze:     Analysis report of the processed content.
 ➜ --preview:     Preview the content in the terminal before processing.
@@ -147,6 +148,25 @@ docs2llms --github username/repository --exclude rst
 ```
 
 `✅ llms.txt    ✅ llms-full.txt`
+
+---
+
+#### **`--verbose`**
+
+Log the processed files in the terminal.
+
+```bash
+docs2llms --github username/repository --verbose
+```
+
+```txt
+(1/3) ➜ example/docs/markdown.md
+(2/3) ➜ example/docs/restructuredtext.rst
+(3/3) ➜ example/docs/plain-text.txt
+Processed ➜ 3 files
+
+✅ llms.txt    ✅ llms-full.txt
+```
 
 ---
 
