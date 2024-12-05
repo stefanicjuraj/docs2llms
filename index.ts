@@ -24,8 +24,8 @@ function parseURL(url: string, baseUrl: string): RepositoryURL {
   return { owner, repo, branch, path: pathParts.join("/") };
 }
 
-function skipDirectory(dirName: string, skipFolders: string[]): boolean {
-  return skipFolders.includes(dirName) || dirName.startsWith(".") ||
+function skipDirectory(dirName: string, skip: string[]): boolean {
+  return skip.includes(dirName) || dirName.startsWith(".") ||
     IGNORE_DIRECTORIES.includes(dirName);
 }
 
@@ -46,30 +46,30 @@ async function cloneRepository(url: string, branch: string): Promise<string> {
 async function getDirectory(
   dirPath: string,
   basePath: string,
-  skipFolders: string[] = [],
-  excludeExtensions: string[] = [],
-  maxSizeMB: number = Infinity,
+  skip: string[] = [],
+  exclude: string[] = [],
+  maxSize: number = Infinity,
   verbose = false,
 ): Promise<{ files: string[]; fullPaths: string[] }> {
   const files: string[] = [];
   const fullPaths: string[] = [];
-  const allowedExtensions = [".md", ".mdx", ".txt", ".rst"];
+  const supportedExtensions = [".md", ".mdx", ".txt", ".rst"];
 
   async function processDirectory(currentPath: string) {
     for await (const entry of Deno.readDir(currentPath)) {
-      const fullEntryPath = join(currentPath, entry.name);
+      const directoryPath = join(currentPath, entry.name);
       if (entry.isDirectory) {
-        if (!skipDirectory(entry.name, skipFolders)) {
-          await processDirectory(fullEntryPath);
+        if (!skipDirectory(entry.name, skip)) {
+          await processDirectory(directoryPath);
         }
       } else if (
-        allowedExtensions.some((ext) => entry.name.endsWith(ext)) &&
-        !excludeExtensions.some((ext) => entry.name.endsWith(ext))
+        supportedExtensions.some((ext) => entry.name.endsWith(ext)) &&
+        !exclude.some((ext) => entry.name.endsWith(ext))
       ) {
-        const { size } = await Deno.stat(fullEntryPath);
-        if (size <= maxSizeMB * 1024 * 1024) {
-          files.push(relative(basePath, fullEntryPath));
-          fullPaths.push(fullEntryPath);
+        const { size } = await Deno.stat(directoryPath);
+        if (size <= maxSize * 1024 * 1024) {
+          files.push(relative(basePath, directoryPath));
+          fullPaths.push(directoryPath);
         }
       }
     }
@@ -154,17 +154,17 @@ Usage (local):  ➜ docs2llms --local /path/to/directory
 Usage (remote): ➜ docs2llms --github username/repository
                 ➜ docs2llms --gitlab username/repository
 
-➜ --llms: Output file for extracted content hyperlinks. Defaults to llms.txt.
-➜ --llms-full: Output file for processed content. Defaults to llms-full.txt.
-➜ --format: Format of the processed content. Available: txt, md, rst. Defaults to txt.
-➜ --branch: The repository branch to clone from. Defaults to main.
-➜ --output-dir: The output directory of the processed content. Defaults to the current directory.
-➜ --skip: Folders to skip during processing.
-➜ --exclude: Exclude files based on specified extensions (md, mdx, rst, txt).
-➜ --verbose: Log the processed files in the terminal.
-➜ --summary: Display a summary of the processed content.
-➜ --analyze: Analysis report of the content (file and word counts, average file size).
-➜ --preview: Preview the content in the terminal before processing.
+➜ --llms:        Output file for extracted content hyperlinks. Defaults to llms.txt.
+➜ --llms-full:   Output file for processed content. Defaults to llms-full.txt.
+➜ --format:      Format of the processed content. Available: txt, md, rst. Defaults to txt.
+➜ --branch:      The repository branch to clone from. Defaults to main.
+➜ --output-dir:  The output directory of the processed content. Defaults to the current directory.
+➜ --skip:        Folders to skip during processing.
+➜ --exclude:     Exclude files based on specified extensions (md, mdx, rst, txt).
+➜ --verbose:     Log the processed files in the terminal.
+➜ --summary:     Display a summary of the processed content.
+➜ --analyze:     Analysis report of the content (file and word counts, average file size).
+➜ --preview:     Preview the content in the terminal before processing.
 ➜ --interactive: Manually select and confirm each file to be processed.
 `);
 }
@@ -172,12 +172,12 @@ Usage (remote): ➜ docs2llms --github username/repository
 async function main() {
   const args = Deno.args;
 
-  let localDocsDir = "";
-  let llmsBaseName = "llms";
-  let llmsFullBaseName = "llms-full";
+  let localDir = "";
+  let llmsName = "llms";
+  let llmsFullName = "llms-full";
   let format = "txt";
-  const skipFolders: string[] = [];
-  const excludeExtensions: string[] = [];
+  const skip: string[] = [];
+  const exclude: string[] = [];
   let githubUrl = "";
   let gitlabUrl = "";
   let branch = "main";
@@ -197,13 +197,13 @@ async function main() {
   for (let i = 0; i < args.length; i++) {
     switch (args[i]) {
       case "--local":
-        localDocsDir = args[++i];
+        localDir = args[++i];
         break;
       case "--llms":
-        llmsBaseName = args[++i];
+        llmsName = args[++i];
         break;
       case "--llms-full":
-        llmsFullBaseName = args[++i];
+        llmsFullName = args[++i];
         break;
       case "--format":
         format = args[++i].replace(/^\./, "");
@@ -211,16 +211,16 @@ async function main() {
       case "--skip":
         i++;
         while (i < args.length && !args[i].startsWith("--")) {
-          skipFolders.push(args[i++]);
+          skip.push(args[i++]);
         }
         i--;
         break;
       case "--exclude":
         i++;
         while (i < args.length && !args[i].startsWith("--")) {
-          excludeExtensions.push(args[i++]);
+          exclude.push(args[i++]);
         }
-        if (excludeExtensions.length === 0) {
+        if (exclude.length === 0) {
           console.error(
             "⚠️ The --exclude option requires a value (txt, md, mdx, rst) to be specified.",
           );
@@ -279,10 +279,10 @@ async function main() {
     }
   }
 
-  const llmsFile = `${llmsBaseName}.${format}`;
-  const llmsFullFile = `${llmsFullBaseName}.${format}`;
+  const llmsFile = `${llmsName}.${format}`;
+  const llmsFullFile = `${llmsFullName}.${format}`;
 
-  if (!localDocsDir && !githubUrl && !gitlabUrl) {
+  if (!localDir && !githubUrl && !gitlabUrl) {
     helpOption();
     Deno.exit(1);
   }
@@ -292,9 +292,9 @@ async function main() {
     (summary ||
       analyze ||
       maxSize !== Infinity ||
-      skipFolders.length > 0 ||
-      llmsBaseName !== "llms" ||
-      llmsFullBaseName !== "llms-full" ||
+      skip.length > 0 ||
+      llmsName !== "llms" ||
+      llmsFullName !== "llms-full" ||
       format !== "txt" ||
       branch !== "main" ||
       outputDir !== ".")
@@ -307,8 +307,8 @@ async function main() {
 
   try {
     let dirPath: string;
-    if (localDocsDir) {
-      dirPath = localDocsDir;
+    if (localDir) {
+      dirPath = localDir;
     } else if (githubUrl) {
       const {
         owner,
@@ -349,8 +349,8 @@ async function main() {
     const { files, fullPaths } = await getDirectory(
       dirPath,
       dirPath,
-      skipFolders,
-      excludeExtensions,
+      skip,
+      exclude,
       maxSize,
       verbose,
     );
