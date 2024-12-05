@@ -117,36 +117,15 @@ async function writeFiles(
   const llmsFilePath = join(outputDir, llmsFile);
   const llmsFullFilePath = join(outputDir, llmsFullFile);
 
-  const llmsWriter = await Deno.open(llmsFilePath, {
-    create: true,
-    truncate: true,
-    write: true,
-  });
-  const llmsFullWriter = await Deno.open(llmsFullFilePath, {
-    create: true,
-    truncate: true,
-    write: true,
-  });
+  await Deno.writeTextFile(
+    llmsFilePath,
+    "# \n\n" + files.map((file) => `- [${basename(file)}](${file})\n`).join(""),
+  );
 
-  try {
-    await llmsWriter.write(new TextEncoder().encode(`# \n\n`));
-
-    for (const file of files) {
-      await llmsWriter.write(
-        new TextEncoder().encode(`- [${basename(file)}](${file})\n`),
-      );
-    }
-
-    for (const fullPath of fullPaths) {
-      const fileContent = await Deno.readTextFile(fullPath);
-      await llmsFullWriter.write(
-        new TextEncoder().encode(fileContent + "\n\n"),
-      );
-    }
-  } finally {
-    llmsWriter.close();
-    llmsFullWriter.close();
-  }
+  const fullContent = await Promise.all(
+    fullPaths.map((path) => Deno.readTextFile(path)),
+  );
+  await Deno.writeTextFile(llmsFullFilePath, fullContent.join("\n\n"));
 
   console.log(`\n✅ ${llmsFile}`);
   console.log(`📂 ${llmsFilePath}`);
