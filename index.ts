@@ -9,59 +9,37 @@ interface RepositoryURL {
   path: string;
 }
 
+const DEFAULT_BRANCH = "main";
+const IGNORE_DIRECTORIES = ["node_modules", ".git", "dist", "build"];
+
 function validateURL(url: string, pattern: RegExp): boolean {
   return pattern.test(url);
 }
 
 function parseURL(url: string, baseUrl: string): RepositoryURL {
-  let owner,
-    repo,
-    branch = "main",
-    path = "";
-  if (url.startsWith(baseUrl)) {
-    const urlParts = url.split("/");
-    owner = urlParts[3];
-    repo = urlParts[4];
-    branch = urlParts[6] || "main";
-    path = urlParts.slice(7).join("/") || "";
-  } else {
-    const urlParts = url.split("/");
-    owner = urlParts[0];
-    repo = urlParts[1];
-  }
-  return { owner, repo, branch, path };
+  const [owner, repo, , branch = DEFAULT_BRANCH, ...pathParts] = url.replace(
+    baseUrl,
+    "",
+  ).split("/");
+  return { owner, repo, branch, path: pathParts.join("/") };
 }
 
 function skipDirectory(dirName: string, skipFolders: string[]): boolean {
-  return (
-    skipFolders.includes(dirName) ||
-    dirName.startsWith(".") ||
-    ["node_modules", ".git", "dist", "build"].includes(dirName)
-  );
+  return skipFolders.includes(dirName) || dirName.startsWith(".") ||
+    IGNORE_DIRECTORIES.includes(dirName);
 }
 
 async function cloneRepository(url: string, branch: string): Promise<string> {
   const temporaryDirectory = await Deno.makeTempDir();
-  const cloneCommand = new Deno.Command("git", {
-    args: [
-      "clone",
-      "-b",
-      branch,
-      "--single-branch",
-      url,
-      temporaryDirectory,
-    ],
+  const { success, stderr } = await new Deno.Command("git", {
+    args: ["clone", "-b", branch, "--single-branch", url, temporaryDirectory],
     stdout: "piped",
     stderr: "piped",
-  });
-
-  const { success, stderr } = await cloneCommand.output();
+  }).output();
 
   if (!success) {
-    const errorMessage = new TextDecoder().decode(stderr);
-    throw new Error(`Git clone failed: ${errorMessage}`);
+    throw new Error(`Git clone failed: ${new TextDecoder().decode(stderr)}`);
   }
-
   return temporaryDirectory;
 }
 
@@ -70,48 +48,40 @@ async function getDirectory(
   basePath: string,
   skipFolders: string[] = [],
   excludeExtensions: string[] = [],
-  maxSize: number = Infinity,
-  verbose: boolean = false,
+  maxSizeMB: number = Infinity,
+  verbose = false,
 ): Promise<{ files: string[]; fullPaths: string[] }> {
   const files: string[] = [];
   const fullPaths: string[] = [];
+  const allowedExtensions = [".md", ".mdx", ".txt", ".rst"];
 
   async function processDirectory(currentPath: string) {
     for await (const entry of Deno.readDir(currentPath)) {
-      if (entry.isDirectory && skipDirectory(entry.name, skipFolders)) {
-        continue;
-      }
-
       const fullEntryPath = join(currentPath, entry.name);
-
-      if (
-        entry.isFile &&
-        [".md", ".mdx", ".txt", ".rst"].some((ext) =>
-          entry.name.endsWith(ext)
-        ) &&
+      if (entry.isDirectory) {
+        if (!skipDirectory(entry.name, skipFolders)) {
+          await processDirectory(fullEntryPath);
+        }
+      } else if (
+        allowedExtensions.some((ext) => entry.name.endsWith(ext)) &&
         !excludeExtensions.some((ext) => entry.name.endsWith(ext))
       ) {
-        const fileInfo = await Deno.stat(fullEntryPath);
-        if (fileInfo.size <= maxSize * 1024 * 1024) {
-          const relativePath = relative(basePath, fullEntryPath);
-          files.push(relativePath);
+        const { size } = await Deno.stat(fullEntryPath);
+        if (size <= maxSizeMB * 1024 * 1024) {
+          files.push(relative(basePath, fullEntryPath));
           fullPaths.push(fullEntryPath);
         }
-      } else if (entry.isDirectory) {
-        await processDirectory(fullEntryPath);
       }
     }
   }
 
   await processDirectory(dirPath);
-
   if (verbose) {
-    files.forEach((file, index) => {
-      console.log(`(${index + 1}/${files.length}) ➜ ${file}`);
-    });
+    files.forEach((file, idx) =>
+      console.log(`(${idx + 1}/${files.length}) ➜ ${file}`)
+    );
     console.log(`\nProcessed ➜ ${files.length} files`);
   }
-
   return { files, fullPaths };
 }
 
@@ -127,70 +97,55 @@ async function writeFiles(
 
   await Deno.writeTextFile(
     llmsFilePath,
-    "# \n\n" + files.map((file) => `- [${basename(file)}](${file})\n`).join(""),
+    files.map((file) => `- [${basename(file)}](${file})`).join("\n"),
   );
-
-  const fullContent = await Promise.all(
+  const content = await Promise.all(
     fullPaths.map((path) => Deno.readTextFile(path)),
   );
-  await Deno.writeTextFile(llmsFullFilePath, fullContent.join("\n\n"));
+  await Deno.writeTextFile(llmsFullFilePath, content.join("\n\n"));
 
-  console.log(`\n✅ ${llmsFile}`);
-  console.log(`📂 ${llmsFilePath}`);
-  console.log(`✅ ${llmsFullFile}`);
-  console.log(`📂 ${llmsFullFilePath}`);
+  console.log(`\n✅ ${llmsFilePath}\n✅ ${llmsFullFilePath}`);
 }
 
 function previewOption(files: string[]) {
-  const map: { [key: string]: string[] } = {};
-
-  files.forEach((file) => {
-    const parts = file.split("/");
-    const dir = parts.slice(0, -1).join("/") || ".";
-    const fileName = parts[parts.length - 1];
-
-    if (!map[dir]) {
-      map[dir] = [];
-    }
+  const previewMap = files.reduce((map, file) => {
+    const [dir, fileName] = [
+      file.substring(0, file.lastIndexOf("/") || 0),
+      basename(file),
+    ];
+    if (!map[dir]) map[dir] = [];
     map[dir].push(fileName);
-  });
+    return map;
+  }, {} as Record<string, string[]>);
 
   console.log("📂 Preview:");
-  for (const dir in map) {
+  for (const dir in previewMap) {
     console.log(`\n${dir}/`);
-    map[dir].forEach((file) => {
-      console.log(`  - ${file}`);
-    });
+    previewMap[dir].forEach((file) => console.log(`  - ${file}`));
   }
 }
 
 async function analyzeOption(files: string[], fullPaths: string[]) {
-  let totalWords = 0;
-  let totalSize = 0;
-  const folderSet = new Set<string>();
+  const analysis = {
+    totalWords: 0,
+    totalSize: 0,
+    folders: new Set<string>(),
+  };
 
   for (const fullPath of fullPaths) {
-    const fileContent = await Deno.readTextFile(fullPath);
-    const wordCount = fileContent.split(/\s+/).length;
-    const fileInfo = await Deno.stat(fullPath);
-
-    totalWords += wordCount;
-    totalSize += fileInfo.size;
-
-    const folderPath = fullPath.substring(0, fullPath.lastIndexOf("/"));
-    folderSet.add(folderPath);
+    const content = await Deno.readTextFile(fullPath);
+    analysis.totalWords += content.split(/\s+/).length;
+    analysis.totalSize += (await Deno.stat(fullPath)).size;
+    analysis.folders.add(fullPath.substring(0, fullPath.lastIndexOf("/")));
   }
 
-  const averageSize = totalSize / files.length / 1024;
-
-  console.log(`\n📊 Analysis Report:`);
-  console.log(`Total folders: ${folderSet.size}`);
-  console.log(`Total files: ${files.length}`);
-  console.log(`Total words: ${totalWords}`);
-  console.log(`Average file size: ${averageSize.toFixed(2)} KB`);
-  console.log(
-    `\n💡 Use the --preview option to view content in the terminal before processing.`,
-  );
+  console.log(`📊 Analysis Report:
+Total folders: ${analysis.folders.size}
+Total files: ${files.length}
+Total words: ${analysis.totalWords}
+Average file size: ${
+    (analysis.totalSize / files.length / 1024).toFixed(2)
+  } KB`);
 }
 
 function helpOption() {
