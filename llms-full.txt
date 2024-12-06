@@ -8,6 +8,8 @@ Using the [llms.txt standard](https://llmstxt.org/), the tool ensures consistent
 
 The *llms.txt* file contains hyperlinks to the documentation files, while the *llms-full.txt* file contains the fully processed documentation content. View examples of the generated [llms.txt](https://github.com/stefanicjuraj/docs2llms/blob/main/llms.txt) and [llms-full.txt](https://github.com/stefanicjuraj/docs2llms/blob/main/llms-full.txt) files for this repository.
 
+To automate this process, the docs2llms workflow can be integrated into GitHub actions or GitLab CI/CD pipelines. This allows the *llms.txt* and *llms-full.txt* files to be updated automatically when changes are made to the documentation.
+
 ## Installation
 
 ```sh
