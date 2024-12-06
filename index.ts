@@ -87,10 +87,12 @@ async function writeFiles(
   const llmsFilePath = join(outputDir, llmsFile);
   const llmsFullFilePath = join(outputDir, llmsFullFile);
 
-  const fileLinks = files.map((file) => `- [${basename(file)}](${file})`).join(
-    "\n",
-  );
-  await Deno.writeTextFile(llmsFilePath, fileLinks);
+  const repositoryName = basename(llmsFilePath).replace(/(\.txt|llms-)/g, "");
+
+  const heading = `# ${repositoryName}\n\n`;
+
+  const fileLinks = files.map((file) => `- [${basename(file)}](${file})`).join("\n");
+  await Deno.writeTextFile(llmsFilePath, heading + fileLinks);
 
   const fileContents = await Promise.all(
     fullPaths.map((path) => Deno.readTextFile(path)),
