@@ -28,8 +28,12 @@ jobs:
         with:
           deno-version: v1.x
 
+      - name: Install docs2llms
+        run: |
+          deno install -n docs2llms https://raw.githubusercontent.com/stefanicjuraj/docs2llms/main/index.ts --allow-read --allow-net --allow-write --allow-run --global -f
+
       - name: Update LLMs
-        run: deno run --allow-read --allow-write --allow-run index.ts --local . --exclude rst,txt --skip example
+        run: docs2llms --local . --exclude rst,txt --skip example
 
       - name: Commit and Push Changes
         run: |
