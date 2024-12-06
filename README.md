@@ -8,8 +8,6 @@ Using the [llms.txt standard](https://llmstxt.org/), the tool ensures consistent
 
 The *llms.txt* file contains hyperlinks to the documentation files, while the *llms-full.txt* file contains the fully processed documentation content. View examples of the generated [llms.txt](https://github.com/stefanicjuraj/docs2llms/blob/main/llms.txt) and [llms-full.txt](https://github.com/stefanicjuraj/docs2llms/blob/main/llms-full.txt) files for this repository.
 
-To automate this process, the docs2llms workflow can be integrated into GitHub actions or GitLab CI/CD pipelines. This allows the *llms.txt* and *llms-full.txt* files to be updated automatically when changes are made to the documentation.
-
 ## Installation
 
 ```sh
@@ -223,3 +221,31 @@ docs2llms --github username/repository --interactive
 (4/4): README.md? (y/n)
 ✅ llms.txt     ✅ llms-full.txt
 ```
+
+## Automation
+
+To automate this process, the `docs2llms` workflow can be integrated into GitHub actions or GitLab CI/CD pipelines. This allows the *llms.txt* and *llms-full.txt* files to be updated automatically when changes are made to the documentation.
+
+### Github Actions
+
+The GitHub Actions workflow ([.github/workflows/update-llms.yml](https://github.com/stefanicjuraj/docs2llms/blob/main/.github/workflows/update-llms.yml)) demonstrates the automation of `docs2llms` execution when changes are pushed to the main branch of the GitHub repository.
+
+For this workflow, the `docs2llms` command is invoked within the `jobs` section with the following options:
+
+`docs2llms --local . --exclude rst,txt --skip example`
+
+This command processes the documentation in the current directory, excluding files with `.rst` and .txt extensions, and skipping the `example` folder. It updates the *llms.txt* and *llms-full.txt* files to ensure that the documentation content is optimized and up to date for use by AI and LLMs.
+
+### GitLab CI/CD
+
+The GitLab CI/CD workflow ([.gitlab/workflows/gitlab-ci.yml](https://github.com/stefanicjuraj/docs2llms/blob/main/.gitlab/workflows/gitlab-ci.yml)) demonstrates the automation of `docs2llms` execution when changes are pushed to the main branch of the GitLab repository.
+
+For this workflow, the `docs2llms` command is invoked within the script section of the `update_llms` job with the following options:
+
+`docs2llms --local . --exclude rst,txt --skip example`
+
+This command processes the documentation in the current directory, excluding files with `.rst` and `.txt` extensions, and skipping the `example` folder. It updates the *llms.txt* and *llms-full.txt* files to ensure that the documentation content is optimized and up to date for use by AI and LLMs.
+
+## Contributing
+
+Contribute by following the [**contributing guide**](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project).
