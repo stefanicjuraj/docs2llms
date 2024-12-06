@@ -199,12 +199,20 @@ async function main() {
         break;
       case "--llms":
         config.llmsFile = args[++i];
+        if (!config.llmsFile.includes(".")) {
+          config.llmsFile += ".txt";
+        }
         break;
       case "--llms-full":
         config.llmsFullFile = args[++i];
+        if (!config.llmsFullFile.includes(".")) {
+          config.llmsFullFile += ".txt";
+        }
         break;
       case "--format":
         config.format = args[++i].replace(/^\./, "");
+        config.llmsFile = config.llmsFile.replace(/\.[^.]+$/, `.${config.format}`);
+        config.llmsFullFile = config.llmsFullFile.replace(/\.[^.]+$/, `.${config.format}`);
         break;
       case "--skip":
         config.skip.push(...args[++i].split(","));
