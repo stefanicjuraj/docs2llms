@@ -147,11 +147,11 @@ Usage (remote): ➜ docs2llms --github username/repository
 
 ➜ --llms:        Output file for hyperlinks to the documentation files. Defaults to llms.txt.
 ➜ --llms-full:   Output file for full documentation content. Defaults to llms-full.txt.
-➜ --format:      Format of the documentation content. Available: txt, md, rst.
+➜ --format:      Format of the documentation content. Available: md, mdx, txt, rst.
 ➜ --branch:      Repository branch to clone from. Defaults to main.
 ➜ --output-dir:  Output directory for the processed documentation content.
 ➜ --skip:        Folders to skip during processing documentation content.
-➜ --exclude:     Exclude documentation files based on extensions (md, mdx, rst, txt).
+➜ --exclude:     Exclude documentation files based on extensions (md, mdx, txt, rst).
 ➜ --max-size:    Include documentation files smaller than the specified maximum size (in MB).
 ➜ --summary:     Summary of the processed documentation files.
 ➜ --analyze:     Analysis report of the processed documentation content.
