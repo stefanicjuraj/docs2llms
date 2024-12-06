@@ -1,17 +1,17 @@
 # docs2llms
 
-**Transform software documentation content into formats optimized for use by AI and LLMs.**
+**Transform software documentation into formats optimized for use by AI and LLMs.**
 
 docs2llms is a command-line tool built with Deno and TypeScript.
 
-Using the [llms.txt standard](https://llmstxt.org/), this tool ensures consistent text formatting for AI and LLMs by extracting content from local directories or remote repositories and converting it into *llms.txt* and *llms-full.txt* files.
+Using the [llms.txt standard](https://llmstxt.org/), the tool ensures consistent text formatting for AI and LLMs by extracting software documentation from local directories or remote repositories and converting it into *llms.txt* and *llms-full.txt* files.
 
-The *llms.txt* file includes hyperlinks to the extracted content, whereas the *llms-full.txt* file contains the fully processed content.
+The *llms.txt* file contains hyperlinks to the documentation files, while the *llms-full.txt* file contains the fully processed documentation content. View examples of the generated [llms.txt](https://github.com/stefanicjuraj/docs2llms/blob/main/llms.txt) and [llms-full.txt](https://github.com/stefanicjuraj/docs2llms/blob/main/llms-full.txt) files for this repository.
 
 ## Installation
 
 ```sh
-deno install -n docs2llms https://raw.githubusercontent.com/stefanicjuraj/docs2llms/main/docs2llms.ts --allow-read --allow-net --allow-write --allow-run --global -f
+deno install -n docs2llms https://raw.githubusercontent.com/stefanicjuraj/docs2llms/main/index.ts --allow-read --allow-net --allow-write --allow-run --global -f
 ```
 
 ## Usage
@@ -34,7 +34,24 @@ docs2llms --gitlab username/repository
 
 ### Options
 
----
+```txt
+Usage (local):  ➜ docs2llms --local /path/to/directory
+Usage (remote): ➜ docs2llms --github username/repository
+                ➜ docs2llms --gitlab username/repository
+
+➜ --llms:        Output file for hyperlinks to the documentation files.
+➜ --llms-full:   Output file for full documentation content.
+➜ --format:      Format of the documentation content. Available: md, mdx, txt, rst.
+➜ --branch:      Repository branch to clone from. Defaults to main.
+➜ --output-dir:  Output directory for the processed documentation content.
+➜ --skip:        Folders to skip during processing documentation content.
+➜ --exclude:     Exclude documentation files based on file extensions.
+➜ --max-size:    Include documentation files smaller than the maximum size (in MB).
+➜ --summary:     Summary of the processed documentation files.
+➜ --analyze:     Analysis report of the processed documentation content.
+➜ --preview:     Preview the documentation files before processing.
+➜ --interactive: Manually select each documentation file to be processed.
+```
 
 #### **`--llms`**
 
