@@ -8,20 +8,6 @@ Using the [llms.txt standard](https://llmstxt.org/), this tool ensures consisten
 
 The *llms.txt* file includes hyperlinks to the extracted content, whereas the *llms-full.txt* file contains the fully processed content. View the generated [llms.txt](https://github.com/stefanicjuraj/docs2llms/blob/main/llms.txt) and [llms-full.txt](https://github.com/stefanicjuraj/docs2llms/blob/main/llms-full.txt) files for this repository.
 
-## Features
-
-&rarr; **Content conversion**
-
-Transform documentation content into standardized `llms.txt` and `llms-full.txt` formats optimized for AI and LLM processing.
-
-&rarr; **Repository integration**
-
-Extract documentation content directly from local directories or remote repositories on GitHub or GitLab.
-
-&rarr; **Configurable options**
-
-Configure file naming, content format, branch selection, output directory, excluded file types, folders to skip, and more.
-
 ## Installation
 
 ```sh
