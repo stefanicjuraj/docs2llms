@@ -45,12 +45,12 @@ Usage (remote): ➜ docs2llms --github username/repository
 ➜ --branch:      Repository branch to clone from. Defaults to main.
 ➜ --output-dir:  Output directory for the processed documentation content.
 ➜ --skip:        Folders to skip during processing documentation content.
-➜ --exclude:     Exclude documentation files based on extensions (md, mdx, rst, txt).
+➜ --exclude:     Exclude documentation files based on extensions.
 ➜ --max-size:    Include documentation files smaller than the maximum size (in MB).
 ➜ --summary:     Summary of the processed documentation files.
 ➜ --analyze:     Analysis report of the processed documentation content.
 ➜ --preview:     Preview the documentation files before processing.
-➜ --interactive: Manually select and confirm each documentation file to be processed.
+➜ --interactive: Manually select each documentation file to be processed.
 ```
 
 #### **`--llms`**
