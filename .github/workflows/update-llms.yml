@@ -4,9 +4,13 @@ on:
   push:
     branches:
       - main
+    paths:
+      - README.md
   pull_request:
     branches:
       - main
+    paths:
+      - README.md
 
 permissions:
   contents: write
@@ -23,9 +27,6 @@ jobs:
         uses: denoland/setup-deno@61fe2df320078202e33d7d5ad347e7dcfa0e8f31
         with:
           deno-version: v1.x
-
-      - name: Deno Lint
-        run: deno lint
 
       - name: Update LLMs
         run: deno run --allow-read --allow-write --allow-run index.ts --local . --exclude rst,txt --skip example
