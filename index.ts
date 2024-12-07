@@ -132,12 +132,12 @@ async function analyzeOption(files: string[], fullPaths: string[]) {
   }
 
   console.log(`
-📊 Analysis Report:
-Total folders: ${analysis.folders.size}
-Total files: ${files.length}
-Total words: ${analysis.totalWords}
-Average file size: ${
-    (analysis.totalSize / files.length / 1024).toFixed(2)
+📊 Documentation Analysis
+📁 Folder count:      ${analysis.folders.size}
+📄 File count:        ${files.length}
+💬 Word count:        ${analysis.totalWords}
+📏 Average file size: ${
+(analysis.totalSize / files.length / 1024).toFixed(2)
   } KB`);
 }
 
