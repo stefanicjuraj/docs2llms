@@ -177,10 +177,11 @@ docs2llms --github username/repository --analyze
 ```
 
 ```txt
-📊 Analysis Report:
-Total files: 30
-Total words: 50300
-Average file size: 3.20 MB
+📊 Documentation Analysis
+📁 Folder count:      10
+📄 File count:        50
+💬 Word count:        50300
+📏 Average file size: 3.20 MB
 ```
 
 ---
