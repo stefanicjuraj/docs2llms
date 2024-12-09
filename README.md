@@ -2,7 +2,7 @@
 
 **Transform software documentation into formats optimized for use by AI and LLMs.**
 
-<img src="./docs2llms.gif" alt="docs2llms" width="500">
+<img src="./assets/docs2llms.gif" alt="docs2llms" width="500">
 
 docs2llms is a command-line tool built with Deno and TypeScript.
 
