@@ -1,6 +1,6 @@
 #!/usr/bin/env
 
-import { basename, join, relative } from "https://deno.land/std/path/mod.ts";
+import { basename, join, relative } from "https://deno.land/std@0.224.0/path/mod.ts";
 
 interface RepositoryURL {
   owner: string;
