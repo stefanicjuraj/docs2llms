@@ -296,8 +296,34 @@ async function main() {
     backup: false,
   };
 
+  const supportedOptions = new Set([
+    "--local",
+    "--llms",
+    "--llms-full",
+    "--format",
+    "--skip",
+    "--exclude",
+    "--branch",
+    "--output-dir",
+    "--preview",
+    "--analyze",
+    "--summary",
+    "--max-size",
+    "--github",
+    "--gitlab",
+    "--backup",
+    "--help",
+  ]);
+
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
+    if (!supportedOptions.has(arg)) {
+      console.error(
+        `⚠️ Invalid option: ${arg}. View available options using the "docs2llms --help" command.`,
+      );
+      Deno.exit(1);
+    }
+
     switch (arg) {
       case "--local":
         config.localDir = args[++i];
