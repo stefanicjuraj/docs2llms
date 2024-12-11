@@ -1,6 +1,10 @@
 #!/usr/bin/env
 
-import { basename, join, relative } from "https://deno.land/std@0.224.0/path/mod.ts";
+import {
+  basename,
+  join,
+  relative,
+} from "https://deno.land/std@0.224.0/path/mod.ts";
 
 interface RepositoryURL {
   owner: string;
@@ -36,7 +40,9 @@ async function cloneRepository(url: string, branch: string): Promise<string> {
 
   const { success, stderr } = await command.output();
   if (!success) {
-    throw new Error(`🚫 Error cloning a Git repository: ${new TextDecoder().decode(stderr)}`);
+    throw new Error(
+      `🚫 Error cloning a Git repository: ${new TextDecoder().decode(stderr)}`,
+    );
   }
 
   return temporaryDirectory;
@@ -93,7 +99,9 @@ async function writeFiles(
       await Deno.stat(llmsFilePath);
       const backupLlms = `${llmsFilePath}.bak`;
       await Deno.copyFile(llmsFilePath, backupLlms);
-      console.log(`✅ ${llmsFilePath} ➜ backup created: ${basename(backupLlms)}`);
+      console.log(
+        `✅ ${llmsFilePath} ➜ backup created: ${basename(backupLlms)}`,
+      );
     } catch (error) {
       if (error instanceof Deno.errors.NotFound) {
         //
@@ -106,7 +114,9 @@ async function writeFiles(
       await Deno.stat(llmsFullFilePath);
       const backupLlmsFull = `${llmsFullFilePath}.bak`;
       await Deno.copyFile(llmsFullFilePath, backupLlmsFull);
-      console.log(`✅ ${llmsFullFilePath} ➜ backup created: ${basename(backupLlmsFull)}`);
+      console.log(
+        `✅ ${llmsFullFilePath} ➜ backup created: ${basename(backupLlmsFull)}`,
+      );
     } catch (error) {
       if (error instanceof Deno.errors.NotFound) {
         //
@@ -120,7 +130,9 @@ async function writeFiles(
 
   const heading = `# ${repositoryName}\n\n`;
 
-  const fileLinks = files.map((file) => `- [${basename(file)}](${file})`).join("\n");
+  const fileLinks = files.map((file) => `- [${basename(file)}](${file})`).join(
+    "\n",
+  );
   await Deno.writeTextFile(llmsFilePath, heading + fileLinks);
 
   const fileContents = await Promise.all(
@@ -166,7 +178,7 @@ async function analyzeOption(files: string[], fullPaths: string[]) {
 📄 File count:        ${files.length}
 💬 Word count:        ${analysis.totalWords}
 📏 Average file size: ${
-(analysis.totalSize / files.length / 1024).toFixed(2)
+    (analysis.totalSize / files.length / 1024).toFixed(2)
   } KB`);
 }
 
@@ -246,8 +258,14 @@ async function main() {
         break;
       case "--format":
         config.format = args[++i].replace(/^\./, "");
-        config.llmsFile = config.llmsFile.replace(/\.[^.]+$/, `.${config.format}`);
-        config.llmsFullFile = config.llmsFullFile.replace(/\.[^.]+$/, `.${config.format}`);
+        config.llmsFile = config.llmsFile.replace(
+          /\.[^.]+$/,
+          `.${config.format}`,
+        );
+        config.llmsFullFile = config.llmsFullFile.replace(
+          /\.[^.]+$/,
+          `.${config.format}`,
+        );
         break;
       case "--skip":
         config.skip.push(...args[++i].split(","));
