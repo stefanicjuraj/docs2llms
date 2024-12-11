@@ -17,6 +17,13 @@ const DEFAULT_BRANCH = "main";
 const IGNORE_DIRECTORIES = ["node_modules", ".git", "dist", "build"];
 const SUPPORTED_EXTENSIONS = [".md", ".mdx", ".txt", ".rst"];
 
+/**
+ * Parses a repository URL and extracts the owner, repository name, branch, and path.
+ *
+ * @param {string} url - The full URL of the repository.
+ * @param {string} baseUrl - The base URL to be replaced (e.g., GitHub or GitLab base URL).
+ * @returns {RepositoryURL} An object containing the owner, repo, branch, and path.
+ */
 function parseURL(url: string, baseUrl: string): RepositoryURL {
   const [owner, repo, , branch = DEFAULT_BRANCH, ...pathParts] = url.replace(
     baseUrl,
@@ -25,11 +32,26 @@ function parseURL(url: string, baseUrl: string): RepositoryURL {
   return { owner, repo, branch, path: pathParts.join("/") };
 }
 
+/**
+ * Determines whether a directory should be skipped based on its name and a list of directories to skip.
+ *
+ * @param {string} dirName - The name of the directory to check.
+ * @param {string[]} skip - An array of directory names to skip.
+ * @returns {boolean} `true` if the directory should be skipped; otherwise, `false`.
+ */
 function skipDirectory(dirName: string, skip: string[]): boolean {
   return skip.includes(dirName) || dirName.startsWith(".") ||
     IGNORE_DIRECTORIES.includes(dirName);
 }
 
+/**
+ * Clones a Git repository to a temporary directory.
+ *
+ * @param {string} url - The URL of the Git repository to clone.
+ * @param {string} branch - The branch to clone from.
+ * @returns {Promise<string>} The path to the temporary directory where the repository was cloned.
+ * @throws An error if the cloning process fails.
+ */
 async function cloneRepository(url: string, branch: string): Promise<string> {
   const temporaryDirectory = await Deno.makeTempDir();
   const command = new Deno.Command("git", {
@@ -48,6 +70,16 @@ async function cloneRepository(url: string, branch: string): Promise<string> {
   return temporaryDirectory;
 }
 
+/**
+ * Recursively retrieves documentation files from a directory, applying skip and exclude filters.
+ *
+ * @param {string} dirPath - The path to the directory to scan.
+ * @param {string} basePath - The base path to calculate relative file paths.
+ * @param {string[]} [skip=[]] - An array of directory names to skip.
+ * @param {string[]} [exclude=[]] - An array of file extensions to exclude.
+ * @param {number} [maxSize=Infinity] - The maximum file size (in MB) to include.
+ * @returns {Promise<{ files: string[]; fullPaths: string[] }>} An object containing arrays of relative file paths and their full paths.
+ */
 async function getDirectory(
   dirPath: string,
   basePath: string,
@@ -58,6 +90,11 @@ async function getDirectory(
   const files: string[] = [];
   const fullPaths: string[] = [];
 
+  /**
+   * Processes a directory by iterating through its entries.
+   *
+   * @param {string} currentPath - The current directory path being processed.
+   */
   async function processDirectory(currentPath: string) {
     for await (const entry of Deno.readDir(currentPath)) {
       const entryPath = join(currentPath, entry.name);
@@ -83,6 +120,16 @@ async function getDirectory(
   return { files, fullPaths };
 }
 
+/**
+ * Writes the list of documentation files and their contents to specified output files.
+ *
+ * @param {string} llmsFile - The output file for hyperlinks to the documentation files.
+ * @param {string} llmsFullFile - The output file for full documentation content.
+ * @param {string[]} files - An array of relative file paths.
+ * @param {string[]} fullPaths - An array of full file paths.
+ * @param {string} outputDir - The directory where output files will be written.
+ * @param {boolean} backup - Whether to create backup copies of existing output files.
+ */
 async function writeFiles(
   llmsFile: string,
   llmsFullFile: string,
@@ -143,6 +190,11 @@ async function writeFiles(
   console.log(`\n✅ ${llmsFilePath}   ✅ ${llmsFullFilePath}`);
 }
 
+/**
+ * Displays a preview of the documentation files organized by their directories.
+ *
+ * @param {string[]} files - An array of relative file paths to preview.
+ */
 function previewOption(files: string[]) {
   const previewMap = files.reduce((map, file) => {
     const dir = file.substring(0, file.lastIndexOf("/") || 0);
@@ -158,6 +210,12 @@ function previewOption(files: string[]) {
   }
 }
 
+/**
+ * Analyzes the documentation files to provide statistics such as total words, total size, and folder count.
+ *
+ * @param {string[]} files - An array of relative file paths.
+ * @param {string[]} fullPaths - An array of full file paths.
+ */
 async function analyzeOption(files: string[], fullPaths: string[]) {
   const analysis = {
     totalWords: 0,
