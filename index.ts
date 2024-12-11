@@ -83,9 +83,38 @@ async function writeFiles(
   files: string[],
   fullPaths: string[],
   outputDir: string,
+  backup: boolean,
 ) {
   const llmsFilePath = join(outputDir, llmsFile);
   const llmsFullFilePath = join(outputDir, llmsFullFile);
+
+  if (backup) {
+    try {
+      await Deno.stat(llmsFilePath);
+      const backupLlms = `${llmsFilePath}.bak`;
+      await Deno.copyFile(llmsFilePath, backupLlms);
+      console.log(`✅ ${llmsFilePath} ➜ backup created: ${basename(backupLlms)}`);
+    } catch (error) {
+      if (error instanceof Deno.errors.NotFound) {
+        //
+      } else {
+        throw error;
+      }
+    }
+
+    try {
+      await Deno.stat(llmsFullFilePath);
+      const backupLlmsFull = `${llmsFullFilePath}.bak`;
+      await Deno.copyFile(llmsFullFilePath, backupLlmsFull);
+      console.log(`✅ ${llmsFullFilePath} ➜ backup created: ${basename(backupLlmsFull)}`);
+    } catch (error) {
+      if (error instanceof Deno.errors.NotFound) {
+        //
+      } else {
+        throw error;
+      }
+    }
+  }
 
   const repositoryName = basename(llmsFilePath).replace(/(\.txt|llms-)/g, "");
 
@@ -159,6 +188,7 @@ Usage (remote): ➜ docs2llms --github username/repository
 ➜ --analyze:     Analysis report of the processed documentation content.
 ➜ --preview:     Preview the documentation files before processing.
 ➜ --interactive: Manually select and confirm each documentation file to be processed.
+➜ --backup:      Create backup copies of existing documentation files before overwriting them.
 `);
 }
 
@@ -180,6 +210,7 @@ async function main() {
     analyze: boolean;
     summary: boolean;
     maxSize: number;
+    backup: boolean;
   } = {
     llmsFile: "llms.txt",
     llmsFullFile: "llms-full.txt",
@@ -192,6 +223,7 @@ async function main() {
     analyze: false,
     summary: false,
     maxSize: Infinity,
+    backup: false,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -246,6 +278,9 @@ async function main() {
         break;
       case "--gitlab":
         config.gitlabUrl = args[++i];
+        break;
+      case "--backup":
+        config.backup = true;
         break;
       case "--help":
         helpOption();
@@ -319,6 +354,7 @@ async function main() {
       files,
       fullPaths,
       config.outputDir,
+      config.backup,
     );
 
     if ((config.githubUrl || config.gitlabUrl) && dirPath) {
