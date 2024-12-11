@@ -53,6 +53,7 @@ Usage (remote): ➜ docs2llms --github username/repository
 ➜ --analyze:     Analysis report of the processed documentation content.
 ➜ --preview:     Preview the documentation files before processing.
 ➜ --interactive: Manually select each documentation file to be processed.
+➜ --backup:      Create backup copies of existing documentation files before overwriting.
 ```
 
 #### **`--llms`**
@@ -222,6 +223,22 @@ docs2llms --github username/repository --interactive
 (2/4): example/docs/restructuredtext.rst? (y/n)
 (3/4): example/docs/plain-text.txt? (y/n)
 (4/4): README.md? (y/n)
+✅ llms.txt     ✅ llms-full.txt
+```
+
+---
+
+#### **`--backup`**
+
+Create backup copies of existing documentation files before overwriting them.
+
+```bash
+docs2llms --github username/repository --backup
+```
+
+```txt
+✅ llms.txt ➜ backup created: llms.txt.bak
+✅ llms-full.txt ➜ backup created: llms-full.txt.bak
 ✅ llms.txt     ✅ llms-full.txt
 ```
 
