@@ -4,7 +4,7 @@ import {
   basename,
   join,
   relative,
-} from "https://deno.land/std@0.224.0/path/mod.ts";
+} from "jsr:@std/path@1";
 
 interface RepositoryURL {
   owner: string;
