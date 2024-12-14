@@ -1,0 +1,19 @@
+stages:
+  - update
+
+update_llms:
+  stage: update
+  image: denoland/deno:alpine-1.28.1
+  script:
+    - deno install -n docs2llms https://jsr.io/@jurajstefanic/docs2llms/0.0.1/mod.ts --allow-read --allow-net --allow-write --allow-run --global -f
+    - docs2llms --local . --exclude rst,txt --skip example
+    - git config --global user.name "gitlab-ci"
+    - git config --global user.email "ci@example.com"
+    - git add llms.txt llms-full.txt
+    - git commit -m "chore: update llms.txt and llms-full.txt" || echo "No changes to commit"
+    - git push
+  only:
+    refs:
+      - main
+    changes:
+      - README.md
