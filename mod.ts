@@ -1,10 +1,6 @@
 #!/usr/bin/env
 
-import {
-  basename,
-  join,
-  relative,
-} from "jsr:@std/path@1";
+import { basename, join, relative } from "jsr:@std/path@1";
 
 export interface RepositoryURL {
   owner: string;
@@ -52,7 +48,10 @@ export function skipDirectory(dirName: string, skip: string[]): boolean {
  * @returns {Promise<string>} The path to the temporary directory where the repository was cloned.
  * @throws An error if the cloning process fails.
  */
-export async function cloneRepository(url: string, branch: string): Promise<string> {
+export async function cloneRepository(
+  url: string,
+  branch: string,
+): Promise<string> {
   const temporaryDirectory = await Deno.makeTempDir();
   const command = new Deno.Command("git", {
     args: ["clone", "-b", branch, "--single-branch", url, temporaryDirectory],
