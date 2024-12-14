@@ -2,6 +2,7 @@
 
 import { basename, join, relative } from "jsr:@std/path@1";
 
+/** Represents the URL of a repository. */
 export interface RepositoryURL {
   owner: string;
   repo: string;
@@ -9,8 +10,11 @@ export interface RepositoryURL {
   path: string;
 }
 
+/** The default branch name used when none is specified. */
 export const DEFAULT_BRANCH = "main";
+/** Directories to be ignored during processing. */
 export const IGNORE_DIRECTORIES = ["node_modules", ".git", "dist", "build"];
+/** File extensions that are supported for documentation files. */
 export const SUPPORTED_EXTENSIONS = [".md", ".mdx", ".txt", ".rst"];
 
 /**
@@ -261,6 +265,10 @@ Usage (remote): ➜ docs2llms --github username/repository
 `);
 }
 
+/**
+ * The main function that serves as the entry point of the application.
+ * It parses command-line arguments, processes documentation files, and manages output operations.
+ */
 export async function main() {
   const args = Deno.args;
 
