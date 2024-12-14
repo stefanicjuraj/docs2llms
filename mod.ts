@@ -6,16 +6,16 @@ import {
   relative,
 } from "jsr:@std/path@1";
 
-interface RepositoryURL {
+export interface RepositoryURL {
   owner: string;
   repo: string;
   branch: string;
   path: string;
 }
 
-const DEFAULT_BRANCH = "main";
-const IGNORE_DIRECTORIES = ["node_modules", ".git", "dist", "build"];
-const SUPPORTED_EXTENSIONS = [".md", ".mdx", ".txt", ".rst"];
+export const DEFAULT_BRANCH = "main";
+export const IGNORE_DIRECTORIES = ["node_modules", ".git", "dist", "build"];
+export const SUPPORTED_EXTENSIONS = [".md", ".mdx", ".txt", ".rst"];
 
 /**
  * Parses a repository URL and extracts the owner, repository name, branch, and path.
@@ -24,7 +24,7 @@ const SUPPORTED_EXTENSIONS = [".md", ".mdx", ".txt", ".rst"];
  * @param {string} baseUrl - The base URL to be replaced (e.g., GitHub or GitLab base URL).
  * @returns {RepositoryURL} An object containing the owner, repo, branch, and path.
  */
-function parseURL(url: string, baseUrl: string): RepositoryURL {
+export function parseURL(url: string, baseUrl: string): RepositoryURL {
   const [owner, repo, , branch = DEFAULT_BRANCH, ...pathParts] = url.replace(
     baseUrl,
     "",
@@ -39,7 +39,7 @@ function parseURL(url: string, baseUrl: string): RepositoryURL {
  * @param {string[]} skip - An array of directory names to skip.
  * @returns {boolean} `true` if the directory should be skipped; otherwise, `false`.
  */
-function skipDirectory(dirName: string, skip: string[]): boolean {
+export function skipDirectory(dirName: string, skip: string[]): boolean {
   return skip.includes(dirName) || dirName.startsWith(".") ||
     IGNORE_DIRECTORIES.includes(dirName);
 }
@@ -52,7 +52,7 @@ function skipDirectory(dirName: string, skip: string[]): boolean {
  * @returns {Promise<string>} The path to the temporary directory where the repository was cloned.
  * @throws An error if the cloning process fails.
  */
-async function cloneRepository(url: string, branch: string): Promise<string> {
+export async function cloneRepository(url: string, branch: string): Promise<string> {
   const temporaryDirectory = await Deno.makeTempDir();
   const command = new Deno.Command("git", {
     args: ["clone", "-b", branch, "--single-branch", url, temporaryDirectory],
@@ -80,7 +80,7 @@ async function cloneRepository(url: string, branch: string): Promise<string> {
  * @param {number} [maxSize=Infinity] - The maximum file size (in MB) to include.
  * @returns {Promise<{ files: string[]; fullPaths: string[] }>} An object containing arrays of relative file paths and their full paths.
  */
-async function getDirectory(
+export async function getDirectory(
   dirPath: string,
   basePath: string,
   skip: string[] = [],
@@ -130,7 +130,7 @@ async function getDirectory(
  * @param {string} outputDir - The directory where output files will be written.
  * @param {boolean} backup - Whether to create backup copies of existing output files.
  */
-async function writeFiles(
+export async function writeFiles(
   llmsFile: string,
   llmsFullFile: string,
   files: string[],
@@ -195,7 +195,7 @@ async function writeFiles(
  *
  * @param {string[]} files - An array of relative file paths to preview.
  */
-function previewOption(files: string[]) {
+export function previewOption(files: string[]) {
   const previewMap = files.reduce((map, file) => {
     const dir = file.substring(0, file.lastIndexOf("/") || 0);
     map[dir] = map[dir] || [];
@@ -216,7 +216,7 @@ function previewOption(files: string[]) {
  * @param {string[]} files - An array of relative file paths.
  * @param {string[]} fullPaths - An array of full file paths.
  */
-async function analyzeOption(files: string[], fullPaths: string[]) {
+export async function analyzeOption(files: string[], fullPaths: string[]) {
   const analysis = {
     totalWords: 0,
     totalSize: 0,
@@ -240,7 +240,7 @@ async function analyzeOption(files: string[], fullPaths: string[]) {
   } KB`);
 }
 
-function helpOption() {
+export function helpOption() {
   console.log(`
 Usage (local):  ➜ docs2llms --local /path/to/directory
 Usage (remote): ➜ docs2llms --github username/repository
@@ -262,7 +262,7 @@ Usage (remote): ➜ docs2llms --github username/repository
 `);
 }
 
-async function main() {
+export async function main() {
   const args = Deno.args;
 
   const config: {
