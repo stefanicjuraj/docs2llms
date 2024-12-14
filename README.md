@@ -16,6 +16,8 @@ The *llms.txt* file contains hyperlinks to the documentation files, while the *l
 deno install -n docs2llms https://jsr.io/@jurajstefanic/docs2llms/0.0.1/mod.ts --allow-read --allow-net --allow-write --allow-run --global -f
 ```
 
+View the published version at [jsr.io/@jurajstefanic/docs2llms](https://jsr.io/@jurajstefanic/docs2llms)
+
 ## Usage
 
 ### Local
