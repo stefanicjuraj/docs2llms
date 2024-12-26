@@ -99,21 +99,37 @@ export async function getDirectory(
    * @param {string} currentPath - The current directory path being processed.
    */
   async function processDirectory(currentPath: string) {
-    for await (const entry of Deno.readDir(currentPath)) {
-      const entryPath = join(currentPath, entry.name);
-      if (entry.isDirectory) {
-        if (!skipDirectory(entry.name, skip)) {
-          await processDirectory(entryPath);
+    try {
+      for await (const entry of Deno.readDir(currentPath)) {
+        const entryPath = join(currentPath, entry.name);
+        if (entry.isDirectory) {
+          if (!skipDirectory(entry.name, skip)) {
+            await processDirectory(entryPath);
+          }
+        } else if (
+          SUPPORTED_EXTENSIONS.some((ext) => entry.name.endsWith(ext)) &&
+          !exclude.some((ext) => entry.name.endsWith(ext))
+        ) {
+          try {
+            const { size } = await Deno.stat(entryPath);
+            if (size <= maxSize * 1024 * 1024) {
+              files.push(relative(basePath, entryPath));
+              fullPaths.push(entryPath);
+            }
+          } catch (error) {
+            if (error instanceof Deno.errors.NotFound) {
+              console.warn(`⚠️ Warning: Could not access file ${entryPath} - skipping`);
+            } else {
+              throw error;
+            }
+          }
         }
-      } else if (
-        SUPPORTED_EXTENSIONS.some((ext) => entry.name.endsWith(ext)) &&
-        !exclude.some((ext) => entry.name.endsWith(ext))
-      ) {
-        const { size } = await Deno.stat(entryPath);
-        if (size <= maxSize * 1024 * 1024) {
-          files.push(relative(basePath, entryPath));
-          fullPaths.push(entryPath);
-        }
+      }
+    } catch (error) {
+      if (error instanceof Deno.errors.NotFound) {
+        console.warn(`⚠️ Warning: Could not access directory ${currentPath} - skipping`);
+      } else {
+        throw error;
       }
     }
   }
@@ -121,6 +137,17 @@ export async function getDirectory(
   await processDirectory(dirPath);
 
   return { files, fullPaths };
+}
+
+
+async function ensureDir(dir: string) {
+  try {
+    await Deno.mkdir(dir, { recursive: true });
+  } catch (error) {
+    if (!(error instanceof Deno.errors.AlreadyExists)) {
+      throw error;
+    }
+  }
 }
 
 /**
@@ -141,6 +168,8 @@ export async function writeFiles(
   outputDir: string,
   backup: boolean,
 ) {
+  await ensureDir(outputDir);
+
   const llmsFilePath = join(outputDir, llmsFile);
   const llmsFullFilePath = join(outputDir, llmsFullFile);
 
@@ -186,11 +215,21 @@ export async function writeFiles(
   await Deno.writeTextFile(llmsFilePath, heading + fileLinks);
 
   const fileContents = await Promise.all(
-    fullPaths.map((path) => Deno.readTextFile(path)),
+    fullPaths.map(async (path) => {
+      try {
+        return await Deno.readTextFile(path);
+      } catch (error) {
+        if (error instanceof Deno.errors.NotFound) {
+          console.warn(`⚠️ Warning: Could not read file ${path}. Skipping...`);
+          return "";
+        }
+        throw error;
+      }
+    }),
   );
   await Deno.writeTextFile(llmsFullFilePath, fileContents.join("\n\n"));
 
-  console.log(`\n✅ ${llmsFilePath}   ✅ ${llmsFullFilePath}`);
+  console.log(`\n✅ ${llmsFilePath}   ✅ ${llmsFullFile}`);
 }
 
 /**
