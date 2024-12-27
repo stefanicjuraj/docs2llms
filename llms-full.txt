@@ -13,7 +13,7 @@ The *llms.txt* file contains hyperlinks to the documentation files, while the *l
 ## Installation
 
 ```sh
-deno install -n docs2llms https://jsr.io/@jurajstefanic/docs2llms/0.0.5/mod.ts --allow-read --allow-net --allow-write --allow-run --global -f
+deno install -n docs2llms https://jsr.io/@jurajstefanic/docs2llms/0.0.6/mod.ts --allow-read --allow-net --allow-write --allow-run --global -f
 ```
 
 View the published version at [jsr.io/@jurajstefanic/docs2llms](https://jsr.io/@jurajstefanic/docs2llms)
