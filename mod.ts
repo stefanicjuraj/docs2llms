@@ -101,6 +101,11 @@ export async function getDirectory(
   async function processDirectory(currentPath: string) {
     for await (const entry of Deno.readDir(currentPath)) {
       const entryPath = join(currentPath, entry.name);
+
+      if (entry.isSymlink) {
+        continue;
+      }
+
       if (entry.isDirectory) {
         if (!skipDirectory(entry.name, skip)) {
           await processDirectory(entryPath);
@@ -109,10 +114,15 @@ export async function getDirectory(
         SUPPORTED_EXTENSIONS.some((ext) => entry.name.endsWith(ext)) &&
         !exclude.some((ext) => entry.name.endsWith(ext))
       ) {
-        const { size } = await Deno.stat(entryPath);
-        if (size <= maxSize * 1024 * 1024) {
-          files.push(relative(basePath, entryPath));
-          fullPaths.push(entryPath);
+        try {
+          const { size } = await Deno.stat(entryPath);
+          if (size <= maxSize * 1024 * 1024) {
+            files.push(relative(basePath, entryPath));
+            fullPaths.push(entryPath);
+          }
+          // deno-lint-ignore no-unused-vars
+        } catch (err) {
+          //
         }
       }
     }
