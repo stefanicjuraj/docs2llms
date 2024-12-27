@@ -25,7 +25,7 @@ export const SUPPORTED_EXTENSIONS = [".md", ".mdx", ".txt", ".rst"];
  * @returns {RepositoryURL} An object containing the owner, repo, branch, and path.
  */
 export function parseURL(url: string, baseUrl: string): RepositoryURL {
-  const [owner, repo, , branch = DEFAULT_BRANCH, ...pathParts] = url.replace(
+  const [owner, repo, branch = DEFAULT_BRANCH, ...pathParts] = url.replace(
     baseUrl,
     "",
   ).split("/");
